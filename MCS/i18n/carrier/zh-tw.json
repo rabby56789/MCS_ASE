@@ -1,0 +1,17 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "ok": "確定",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "id": "車輛編號",
+  "name": "車輛名稱",
+  "type": "車輛類型",
+  "brand": "車輛廠牌",
+  "remark": "說明"
+}

@@ -1,0 +1,450 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="logMqtt" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret"></span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_seq" name="SEQ" type="text" class="form-control" />
+                            <label data-lngKey="seq" for="query_seq"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_car_no" name="CAR_NO" type="text" class="form-control" />
+                            <label data-lngKey="car_no" for="query_car_no"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <label class="icon-datepicker"></label>
+                        <div class="form-label-group in-border">
+                            <!--日期元件屬性 type="text" class="date"-->
+                            <input type="text" id="query_beginDate" class="form-control date">
+                            <label data-lngKey="send_day_begin" for="query_beginDate"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <label class="icon-datepicker"></label>
+                        <div class="form-label-group in-border">
+                            <input type="text" id="query_beginDateEnd" class="form-control date">
+                            <label data-lngKey="send_day_end" for="query_beginDateEnd"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+
+        <table id="dg"></table>
+    </div>
+
+</div>
+
+<!--畫面動作-->
+
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let queryParams;
+    let doc;
+
+    //頁面元件初始化
+    function PageInit() {
+        //action = 'query';
+        $('#dg').datagrid({
+            url: '../api/ApiLogLowerMQTT/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'INSERT_TIME',
+            sortOrder: 'desc',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'ASE_SEQ', title: doc.getTextByKey('seq') },
+                { field: 'TASKCODE', title: doc.getTextByKey('taskcode') },
+                { field: 'ASE_JOB_NAME', title: doc.getTextByKey('job_name') },
+                { field: 'ASE_START_LOC', title: doc.getTextByKey('start_loc') },
+                { field: 'ASE_START_QRCODE', title: doc.getTextByKey('start_qrcode') },
+                { field: 'ASE_TARGET_LOC', title: doc.getTextByKey('target_loc') },
+                { field: 'ASE_TARGET_QRCODE', title: doc.getTextByKey('target_qrcode') },
+                { field: 'ASE_CAR_NO', title: doc.getTextByKey('car_no'), sortable: true },
+                { field: 'INSERT_TIME', title: doc.getTextByKey('insert_time'), sortable: true },
+                { field: 'UPDATE_TIME', title: doc.getTextByKey('update_time') },
+                { field: 'GUID', title: doc.getTextByKey('sended'), hidden: true }
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedIndex = index;
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    return false; //預設初次載入頁面不查詢
+                } else {
+                    param.SEQ = queryParams.SEQ;
+                    param.CAR_NO = queryParams.CAR_NO;
+                    param.STATUS = queryParams.STATUS;
+                    param.INSERT_TIME_START = queryParams.INSERT_TIME_START;
+                    param.INSERT_TIME_END = queryParams.INSERT_TIME_END;
+                }
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+            }, view: detailview,
+            detailFormatter: function () {
+                return '<div style="padding:2px"><table class="ddv"></table></div>';
+            }, onExpandRow: function (index, row) {
+                var ddv = $(this).datagrid('getRowDetail', index).find('table.ddv');
+                ddv.datagrid({
+                    url: '../api/ApiLogLowerMQTT/QueryMQTTLog',
+                    method: 'POST',
+                    singleSelect: true,
+                    columns: [[
+                        { field: 'TASK_GUID', title: doc.getTextByKey('guid'), hidden: true },
+                        { field: 'TOPIC', title: doc.getTextByKey('topic'), width: '20%' },
+                        { field: 'SEND_TIME', title: doc.getTextByKey('send_time'), width: '20%'},
+                        { field: 'CONTENT', title: doc.getTextByKey('content'), width:'60%'}
+                    ]],
+                    onLoadSuccess: function () {
+                        setTimeout(function () {
+                            $('#dg').datagrid('fixDetailRowHeight', index);
+                        }, 0);
+                    }, onBeforeLoad: function (param) {
+
+                        param.TASK_GUID = selectedGUID;
+                    }
+                });
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        //停用輸入欄位的自動完成
+        let inputs = document.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        if (window.location.href.endsWith('logMqtt')) {
+            $('#breadcrumb').css({
+                display: 'none'
+            });
+        }
+
+
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', Query);
+        $('#btnAccept').on('click', Accept);
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+        $('#query_beginDateEnd').on('click', DtaeControl);
+        $(window).on("resize", resizeLayout);
+
+
+        $('.date').datepicker({
+            onSelect: (formattedDate, date, inst) => {
+                let target = inst.el.id;
+
+                switch (target) {
+                    case "query_beginDate":
+                        if (formattedDate == "") {
+                            $('#query_beginTime').datepicker().data('datepicker').clear();
+                            $('#query_beginTime').prop('disabled', true);
+                        } else {
+                            $('#query_beginTime').prop('disabled', false);
+                        }
+                        break;
+                    case "query_endDate":
+                        if (formattedDate == "") {
+                            $('#query_endTime').datepicker().data('datepicker').clear();
+                            $('#query_endTime').prop('disabled', true);
+                        } else {
+                            $('#query_endTime').prop('disabled', false);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#queryConditionPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //查詢
+    function Query() {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        queryParams = $('#formQuery').serializeObject();
+
+        //取得日期區間
+        let dateStart = $('#query_beginDate').val();
+        let dateEnd = $('#query_beginDateEnd').val();
+
+        //dateStart += " ";
+        //dateEnd += " ";
+
+        //dateStart += $('#query_beginTime').val() == "" ? "00:00:00.000" : $('#query_beginTime').val();
+        //dateEnd += $('#query_beginTimeEnd').val() == "" ? "23:59:59.999" : $('#query_beginTimeEnd').val();
+
+        console.log("startDate:" + dateStart);
+        console.log("endDate:" + dateEnd);
+
+        //起始與結束時間皆有輸入時,檢查時間區間是否合法
+        if (dateStart != "" && dateEnd != "") {
+            if (dateTimeValidation(dateStart, dateEnd, '<=') == false) {
+                toastr.error(
+                    globalDoc.getTextByKey('error'),
+                    globalDoc.getTextByKey('dateRangeError')
+                );
+                return;
+            }
+        }
+
+        queryParams.INSERT_TIME_START = dateStart.trim() != "" ? dateStart : "";
+        queryParams.INSERT_TIME_END = dateEnd.trim() != "" ? dateEnd : "";
+
+        $('#dg').datagrid('gotoPage', 1); //強制返回第一頁
+    }
+
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiUser/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let actionUrl, data;
+
+        $('#modal_edit').modal('hide');
+
+        data = {
+            ID: $('#edit_id').val(),
+            PASSWORD: $('#edit_password').val(),
+            REMARK: $('#edit_remark').val()
+        };
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+        } else {
+            data.GUID = selectedGUID
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiUser/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiUser/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiUser/Delete";
+                break;
+        }
+
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+
+                Query();
+
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'query':
+                        LoadData(queryParams);
+                        break;
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    ////[DataGrid]轉換時間格式
+    //function convertTime(value, row, index) {
+    //    return value.replace('T', ' ');
+    //}
+
+    ////[DataGrid]勾選狀態轉換
+    //function convertEnable(value, row, index) {
+    //    return value == '1' ? "V" : " ";
+    //}
+
+    //控制查詢日期區間(結束日期>開始日期)
+    function DtaeControl() {
+        var beginDate = $("#query_beginDate").val();
+        var minRange = new Date(beginDate);//轉換為Date
+        minRange.setDate(minRange.getDate() + 1);//往後一天
+        $("#query_beginDateEnd").datepicker({ dateFormat: 'yyyy-mm-dd', minDate: new Date(minRange) });
+    }
+
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+
+        });
+    });
+</script>

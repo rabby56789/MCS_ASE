@@ -1,0 +1,547 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="logAlarm" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret"></span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+                <div class="row">
+                    <div class="col-md-3">
+                        <!--floating-labels使用必加div外框與class屬性-->
+                        <div class="form-label-group in-border ">
+                            <input id="factory" name="FACTORY" type="text" class="form-control" />
+                            <!--label必須放在input之後,否則文字會在輸入框內-->
+                            <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                            <label data-lngKey="factory" for="factory"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-label-group in-border ">
+                            <input id="floor" name="FLOOR" type="text" class="form-control" />
+                            <label data-lngKey="floor" for="floor"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-label-group in-border ">
+                            <input id="map" name="MAP" type="text" class="form-control" />
+                            <label data-lngKey="map" for="map"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-label-group in-border ">
+                            <input id="equipment_no" name="EQUIPMENT_NO" type="text" class="form-control" />
+                            <label data-lngKey="equipment_no" for="equipment_no"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 form-group">
+                        <label class="icon-datepicker"></label>
+                        <div class="form-label-group in-border">
+                            <!--日期元件屬性 type="text" class="date"-->
+                            <input type="text" id="query_beginDate" class="form-control date">
+                            <label data-lngKey="DayBegin" for="query_beginDate"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label class="icon-datepicker"></label>
+                        <div class="form-label-group in-border">
+                            <!--時間元件屬性 type="text" class="time"-->
+                            <input type="text" id="query_beginTime" class="form-control time">
+                            <label data-lngKey="TimeBegin" for="query_beginTime"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 form-group">
+                        <label class="icon-datepicker"></label>
+                        <div class="form-label-group in-border">
+                            <input type="text" id="query_endDate" class="form-control date">
+                            <label data-lngKey="DayBeginEnd" for="query_endDate"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label class="icon-datepicker"></label>
+                        <div class="form-label-group in-border">
+                            <input type="text" id="query_endTime" class="form-control time">
+                            <label data-lngKey="TimeBeginEnd" for="query_beginTimeEnd"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+
+        <table id="dg"></table>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_edit">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <!--floating-labels使用必加div外框與class屬性-->
+                                <div class="form-label-group in-border must-input">
+                                    <input id="shelf_id" type="text" class="form-control" />
+                                    <!--label必須放在input之後,否則文字會在輸入框內-->
+                                    <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                                    <label data-lngKey="shelf_id" for="shelf_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="area" type="text" class="form-control" />
+                                    <label for="area" data-lngKey="area"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="storage" type="text" class="form-control" />
+                                    <label for="storage" data-lngKey="storage"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="priority" type="text" class="form-control" />
+                                    <label for="priority" data-lngKey="priority"></label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="confirm">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--畫面動作-->
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let queryParams;
+    let doc;
+
+    //頁面元件初始化
+    function PageInit() {
+        //action = 'query';
+        $('#dg').datagrid({
+            url: '../api/ApiLogAlarm/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'INSERT_TIME',
+            order:'desc',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'FACTORY', title: doc.getTextByKey('factory'), sortable: true },
+                { field: 'FLOOR', title: doc.getTextByKey('floor'), sortable: true },
+                { field: 'MAP', title: doc.getTextByKey('map'), sortable: true },
+                { field: 'EQUIPMENT', title: doc.getTextByKey('equipment'), sortable: true },
+                { field: 'EQUIPMENT_NO', title: doc.getTextByKey('equipment_no'), sortable: true },
+                { field: 'MESSAGE', title: doc.getTextByKey('message'), sortable: true },
+                { field: 'FUNCTION_NAME', title: doc.getTextByKey('function_name'), sortable: true },
+                { field: 'TYPE', title: doc.getTextByKey('type'), sortable: true },
+                { field: 'SEND_ENABLE', title: doc.getTextByKey('sended'), formatter: convertEnable },
+                { field: 'INSERT_TIME', title: doc.getTextByKey('query_begin_date'), width: '15%', formatter: convertTime },
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedIndex = index;
+
+                //$('#btnEdit').linkbutton('enable');
+                $('#btnDelete').linkbutton('enable');
+
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    return false; //預設初次載入頁面不查詢
+                } else {
+                    param.total = queryParams.total;
+                    param.FACTORY = queryParams.FACTORY;
+                    param.FLOOR = queryParams.FLOOR;
+                    param.MAP = queryParams.MAP;
+                    param.EQUIPMENT_NO = queryParams.EQUIPMENT_NO;
+                    param.INSERT_TIME_START = queryParams.INSERT_TIME_START;
+                    param.INSERT_TIME_END = queryParams.INSERT_TIME_END;
+                }
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+
+                //$('#btnEdit').linkbutton('disable');
+                $('#btnDelete').linkbutton('disable');
+                //bindresize(this);
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        //停用輸入欄位的自動完成
+        let inputs = document.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        setNotNull();
+        if (window.location.href.endsWith('LogTask')) {
+            $('#breadcrumb').css({
+                display: 'none'
+            });
+        }
+
+
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', Query);
+        $('#btnAccept').on('click', Accept);
+        //$('.btn-confirm').on('click', Confirm);
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+
+        $(window).on("resize", resizeLayout);
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#queryConditionPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+        $('#edit_factory').addClass('required');
+        $('#edit_phase').addClass('required');
+        $('#edit_depart').addClass('required');
+    }
+
+    //查詢
+    function Query() {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        queryParams = $('#formQuery').serializeObject();
+
+        //取得日期區間
+        let dateStart = $('#query_beginDate').val() == "" ? "" : $('#query_beginDate').val();
+        let dateEnd = $('#query_endDate').val() == "" ? "" : $('#query_endDate').val();
+
+        dateStart += " ";
+        dateEnd += " ";
+
+        dateStart += $('#query_beginTime').val() == "" ? "00:00:00.000" : $('#query_beginTime').val();
+        dateEnd += $('#query_endTime').val() == "" ? "23:59:59.999" : $('#query_endTime').val();
+
+        console.log("startTime:" + dateStart);
+        console.log("endTime:" + dateEnd);
+
+        //起始與結束時間皆有輸入時,檢查時間區間是否合法
+        if (dateStart != "" && dateEnd != "") {
+            if (dateTimeValidation(dateStart, dateEnd, '<=') == false) {
+                toastr.error(
+                    globalDoc.getTextByKey('error'),
+                    globalDoc.getTextByKey('dateRangeError')
+                );
+                return;
+            }
+        }
+
+        queryParams.INSERT_TIME_START = dateStart.trim() != "" ? dateStart : "";
+        queryParams.INSERT_TIME_END = dateEnd.trim() != "" ? dateEnd : "";
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiLogAlarm/Count",
+            data: queryParams,
+            dataType: "json",
+            success: function (response) {
+                let Count = response.count;
+                queryParams.total = Count;
+
+                if (Count > 1000) {
+                    JQMessageBox(
+                        globalDoc.getTextByKey('confirm'),
+                        globalDoc.getTextByKey('over1000'),
+                        {
+                            'Y': globalDoc.getTextByKey('y'),
+                            'N': globalDoc.getTextByKey('n'),
+                            "export": globalDoc.getTextByKey('expXls')
+                        },
+                        Confirm
+                    );
+                }
+                else {
+                    LoadData(queryParams);
+                }
+                //$("#dg").datagrid('options').queryParams = parms;
+                $('#dg').datagrid('gotoPage', 1);
+
+            }
+        });
+
+    }
+
+    //查詢:Show至Grid上
+    async function LoadData(params) {
+        //LOG:執行前抓SQL與紀錄執行前時間
+        let getSqlSucceed = await getSql($('#funcName').val(), 'Query', queryParams);
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiLogAlarm/Count",
+            data: params,
+            dataType: "json",
+            complete: function (jqXHR, textStatus) { //成功或失敗均會執行
+                if (textStatus == "success") {
+                    //$("#dg").datagrid('loadData', jqXHR.responseJSON);
+                    $('#dg').datagrid('gotoPage', 1); //強制返回第一頁
+                    //$('#btnExportOnGrid').linkbutton('enable');
+
+                    //LOG:紀錄執行時間差
+                    if (getSqlSucceed) {
+                        saveRequestPerformanceLog(
+                            sessionStorage.getItem('userGuid'),
+                            sessionStorage.getItem('groupId')
+                        );
+                    }
+                }
+                //執行完畢重啟按鈕
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        })
+    }
+
+
+
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiUser/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let actionUrl, data;
+
+        $('#modal_edit').modal('hide');
+
+        data = {
+            ID: $('#edit_id').val(),
+            PASSWORD: $('#edit_password').val(),
+            REMARK: $('#edit_remark').val()
+        };
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+        } else {
+            data.GUID = selectedGUID
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiUser/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiUser/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiUser/Delete";
+                break;
+        }
+
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+
+                Query();
+
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'query':
+                        LoadData(queryParams);
+                        break;
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+    //[DataGrid]勾選狀態轉換
+    function convertEnable(value, row, index) {
+        return value == '1' ? "V" : " ";
+    }
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+
+        });
+    });
+</script>

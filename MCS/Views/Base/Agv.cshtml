@@ -1,0 +1,832 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="Agv" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret">查詢條件</span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!--floating-labels使用必加div外框與class屬性-->
+                        <div class="form-label-group in-border">
+                            <input id="query_1" name="AGV_ID" type="text" class="form-control" />
+                            <!--label必須放在input之後,否則文字會在輸入框內-->
+                            <label data-lngKey="agv_id" for="query_1"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_2" name="AGV_NAME" type="text" class="form-control" />
+                            <label data-lngKey="agv_name" for="query_2"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_3" name="AGV_TYPE" type="text" class="form-control" />
+                            <label data-lngKey="agv_type" for="query_3"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_4" name="RATED_LOAD" type="text" class="form-control" />
+                            <label data-lngKey="rated_load" for="query_4"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_5" name="LIFTING_HEIGHT" type="text" class="form-control" />
+                            <label data-lngKey="lifting_height" for="query_5"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_6" name="WEIGHT" type="text" class="form-control" />
+                            <label data-lngKey="weight" for="query_6"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_7" name="ROTATION_DIAMETER" type="text" class="form-control" />
+                            <label data-lngKey="rotation_diameter" for="query_7"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_8" name="NAVIGATION" type="text" class="form-control" />
+                            <label data-lngKey="navigation" for="query_8"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_9" name="DIMENSION" type="text" class="form-control" />
+                            <label data-lngKey="dimension" for="query_9"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_10" name="RATED_SPEED" type="text" class="form-control" />
+                            <label data-lngKey="rated_speed" for="query_10"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border">
+                            <input id="query_11" name="ROTATION" type="text" class="form-control" />
+                            <label data-lngKey="rotation_speed" for="query_11"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border agv-content">
+                            <input id="query_group_id_input" name="GROUP_ID" class="form-control"/>
+                            <label for="query_group_id_input" data-lngKey="agvgroup_id"></label>
+                            <button data-target-name="query_group_id" type="button" id="query_group_id" class="button queryBtn float-right log">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent" ">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton log" plain="true" data-lngKey="add"><i class="fas fa-file-medical fa-lg"></i></a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton log" plain="true" data-lngKey="edit"><i class="fas fa-file-signature fa-lg"></i></a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton log" plain="true" data-lngKey="delete"><i class="fas fa-trash-alt fa-lg"></i></a>
+        </div>
+        <table id="dg"></table>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_agv_id" name="AGV_ID" type="text" class="form-control" />
+                                    <label for="edit_agv_id" data-lngKey="agv_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_agv_name" name="AGV_NAME" type="text" class="form-control" />
+                                    <label for="edit_agv_name" data-lngKey="agv_name"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_agv_type" name="AGV_TYPE" type="text" class="form-control" />
+                                    <label for="edit_agv_type" data-lngKey="agv_type"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_rated_load" name="RATED_LOAD" type="text" class="form-control" />
+                                    <label for="edit_rated_load" data-lngKey="rated_load"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_lifting_height" name="LIFTING_HEIGHT" type="text" class="form-control" />
+                                    <label for="edit_lifting_height" data-lngKey="lifting_height"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_weight" name="WEIGHT" type="text" class="form-control" />
+                                    <label for="edit_weight" data-lngKey="weight"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_rotation_diameter" name="ROTATION_DIAMETER" type="text" class="form-control" />
+                                    <label for="edit_rotation_diameter" data-lngKey="rotation_diameter"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_navigation" name="NAVIGATION" type="text" class="form-control" />
+                                    <label for="edit_navigation" data-lngKey="navigation"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_dimension" name="DIMENSION" type="text" class="form-control" />
+                                    <label for="edit_dimension" data-lngKey="dimension"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_rated_speed" name="RATED_SPEED" type="text" class="form-control" />
+                                    <label for="edit_rated_speed" data-lngKey="rated_speed"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_rotation_speed" name="ROTATION_SPEED" type="text" class="form-control" />
+                                    <label for="edit_rotation_speed" data-lngKey="rotation_speed"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <div class="form-label-group in-border agv-content">
+                                        <input id="edit_group_id_input" name="AGVGROUP_ID" class="form-control" readonly/>
+                                        <label data-lngKey="agvgroup_id" for="edit_group_id_input"></label>
+                                        <button data-target-name="query_group_id" type="button" id="edit_group_id" class="button queryBtn float-right log">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_remark" name="REMARK" type="text" class="form-control" />
+                                    <label for="edit_remark" data-lngKey="remark"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--群組選擇視窗-->
+    <div id="modal_Query" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="queryModalTitle" class="modal-title"></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formQueryB">
+                        <div class="row">
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="query_chooseId" name="GROUP_ID" type="text" class="form-control" />
+                                    <label for="query_chooseId" data-lngKey="agvgroup_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="query_chooseName" name="GROUP_NAME" type="text" class="form-control" />
+                                    <label for="query_chooseName" data-lngKey="agvgroup_name"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <button type="button" id="btnQueryChoose" class="btn btn-primary log ajaxRequest" data-lngKey="search"></button>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="dgB"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnChoose" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let queryParams;
+    let doc;
+    let agvGroup_guid;
+    let bannedModify = []; //禁止修改的欄位input name
+    let choosetargetId;
+
+    //頁面元件初始化
+    function PageInit() {
+        $('#dg').datagrid({
+            url: '../api/ApiAgv/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'AGV_ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'AGV_ID', title: doc.getTextByKey('agv_id'), sortable: true },
+                { field: 'AGV_NAME', title: doc.getTextByKey('agv_name'), sortable: true },
+                { field: 'AGV_TYPE', title: doc.getTextByKey('agv_type'), sortable: true },
+                { field: 'RATED_LOAD', title: doc.getTextByKey('rated_load'), sortable: true },
+                { field: 'LIFTING_HEIGHT', title: doc.getTextByKey('lifting_height'), sortable: true },
+                { field: 'WEIGHT', title: doc.getTextByKey('weight'), sortable: true },
+                { field: 'ROTATION_DIAMETER', title: doc.getTextByKey('rotation_diameter'), sortable: true },
+                { field: 'NAVIGATION', title: doc.getTextByKey('navigation'), sortable: true },
+                { field: 'DIMENSION', title: doc.getTextByKey('dimension') },
+                { field: 'RATED_SPEED', title: doc.getTextByKey('rated_speed'), sortable: true },
+                { field: 'ROTATION_SPEED', title: doc.getTextByKey('rotation_speed'), sortable: true },
+                { field: 'AGVGROUP_ID', title: doc.getTextByKey('agvgroup_id'), sortable: true },
+                { field: 'AGVGROUP_GUID', title: '', width: '0%', hidden: true },
+                { field: 'REMARK', title: doc.getTextByKey('remark') }
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedIndex = index;
+
+                $('#btnEdit').linkbutton('enable');
+                $('#btnDelete').linkbutton('enable');
+
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    return false; //預設初次載入頁面不查詢
+                }
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+
+                $('#btnEdit').linkbutton('disable');
+                $('#btnDelete').linkbutton('disable');
+                //bindresize(this);
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let tagArr = document.getElementsByTagName("input");
+        for (let i = 0; i < tagArr.length; i++) {
+            tagArr[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#modal_Query').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        setNotNull();
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#query_group_id').on('click', () => { QueryData(1, 'group_idAll') });
+
+        $('#btnQuery').on('click', () => { Query(1) });
+        $('#btnAdd').on('click', Add);
+        $('#btnEdit').on('click', Edit);
+        $('#btnDelete').on('click', Delete);
+        $('#btnAccept').on('click', Accept);
+        $('.btn-confirm').on('click', Confirm);
+        $('#btnChoose').on('click', group);
+        $('#btnQueryChoose').on('click', queryB);
+        $('#query_group_id').on('click', ChooseSnow);
+        $('#edit_group_id').on('click', ChooseSnow);
+
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+        $('#modal_editb').on('show.bs.modal', onEditModalShowB);
+        $(window).on("resize", resizeLayout);
+        $('#modal_Query').on('show.bs.modal', beforeGroupModalShow);
+        $('#modal_Query').on('shown.bs.modal', onGroupModalShow);
+    }
+
+    //事件:群組選擇視窗開啟
+    function onGroupModalShow() {
+        $('#btnChoose').text(globalDoc.getTextByKey('ok'));
+        tableInitB();
+        $('#dgB').datagrid('loadData', { "total": 0, "rows": [] });
+        $('#btnChoose').attr('disabled', true);
+    }
+
+    //查詢B表 群組
+    function queryB() {
+        queryParamsB = new Object();
+        queryParamsB = $('#formQueryB').serializeObject();
+        $('#dgB').datagrid('options').queryParams = queryParamsB;
+        $('#dgB').datagrid('gotoPage', 1);
+    }
+
+    //群組選擇
+    function group(e) {
+        $('#modal_Query').modal('hide');
+        $('#formQueryB').trigger("reset");
+    }
+
+    //群組選擇開窗
+    function ChooseSnow(e) {
+        choosetargetId = e.currentTarget.id;
+        $('#modal_Query').modal('show');
+    }
+
+    //事件:群組選擇視窗開啟之後
+    function beforeGroupModalShow(e) {
+        let targetId = choosetargetId;
+        let inputElms = document.forms["formQueryB"].getElementsByTagName("input");
+        //清空輸入欄位
+        for (let i = 0; i < inputElms.length; i++) {
+            inputElms[i].value = "";
+        }
+        //變更標題
+        if (targetId === "query_group_id" || targetId === "edit_group_id") {
+            $('#queryModalTitle').text(doc.getTextByKey("群組代碼"));
+        } else {
+            $('#queryModalTitle').text(doc.getTextByKey("群組名稱"));
+        }
+
+        // queryParamsB = null;
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#formQueryPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_agv_name').addClass('required');
+        $('#edit_agv_id').addClass('required');
+    }
+
+    //查詢群組Count
+    async function QueryData(pageIdx, selectWhat) {
+        switch (selectWhat) {
+            case "group_idAll":
+                queryurl = '../api/ApiAgv/GetGroupIdCount';
+                break;
+        }
+
+        queryParamsB = $('#formQueryB').serializeObject();
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: queryurl,
+                data: queryParamsB,
+                dataType: "json",
+                success: function (response) {
+                    queryParamsB.total = response.count;
+                    resolve(queryParamsB);
+
+                }
+            }).then((parms) => {
+                $("#dgB").datagrid('options').queryParams = parms;
+                $('#dgB').datagrid('gotoPage', pageIdx);
+            });
+        });
+    }
+
+    //查詢
+    async function Query(pageIdx) {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        queryParams = $('#formQuery').serializeObject();
+
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiAgv/Count",
+                data: queryParams,
+                dataType: "json",
+                success: function (response) {
+                    queryParams.total = response.count;
+                    resolve(queryParams);
+                }
+            });
+        }).then((parms) => {
+            $("#dg").datagrid('options').queryParams = parms;
+            $('#dg').datagrid('gotoPage', pageIdx);
+
+            return;
+        }).then(() => {
+            $('#btnExportOnGrid').linkbutton('enable');
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //新增,清空欄位後開窗
+    function Add() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'add';
+        //selectedGUID = "";
+
+        let elm = document.getElementById("formEdit");
+
+        for (let i = 0; i < elm.length; i++) {
+            elm[i].value = "";
+            elm[i].disabled = false;
+        }
+
+        $('#modal_edit').modal('show');
+    }
+
+    //編輯
+    function Edit() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        let data = { GUID: selectedGUID };
+        action = 'edit';
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiAgv/GetOneByGUID",
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                let userData = data.rows[0];
+                let elm = document.getElementById("formEdit");
+
+                for (let i = 0; i < elm.length; i++) {
+                    let name = elm[i].name;
+                    $(elm[i]).val(userData[name]);
+
+                    if (bannedModify.includes(name)) {
+
+                    }
+                }
+            },
+            complete: function (url) {
+                $('#modal_edit').modal('show');
+            }
+        });
+    }
+
+    //刪除
+    function Delete() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'delete';
+
+        JQMessageBox(
+            globalDoc.getTextByKey('confirm'),
+            globalDoc.getTextByKey('delMsg'),
+            {
+                'Y': globalDoc.getTextByKey('y'),
+                'N': globalDoc.getTextByKey('n')
+            },
+            Confirm
+        );
+    }
+
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShowB(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let data, actionUrl, guid;
+        let edit_agv_id = $('#edit_agv_id').val();
+        let edit_agv_name = $('#edit_agv_name').val();
+        let edit_agv_type = $('#edit_agv_type').val();
+        let edit_rated_load = $('#edit_rated_load').val();
+        let edit_lifting_height = $('#edit_lifting_height').val();
+        let edit_weight = $('#edit_weight').val();
+        let edit_rotation_diameter = $('#edit_rotation_diameter').val();
+        let edit_navigation = $('#edit_navigation').val();
+        let edit_dimension = $('#edit_dimension').val();
+        let edit_rated_speed = $('#edit_rated_speed').val();
+        let edit_rotation_speed = $('#edit_rotation_speed').val();
+        let edit_group_id = $('#edit_group_id_input').val();
+        let edit_remark = $('#edit_remark').val();
+        $('#modal_edit').modal('hide');
+        $('#btnAccept').attr('disabled', false);
+
+        data = $('#formEdit').serializeObject();
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+        } else {
+            data.GUID = selectedGUID
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+        data.AGVGROUP_GUID = agvGroup_guid;
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiAgv/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiAgv/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiAgv/Delete";
+                break;
+        }
+        //取得目前頁面
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+
+        //#region 數字或小數
+        if (isNaN(edit_rated_load)) {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('額定負載請輸入數字')
+            );
+            return;
+        }
+        if (isNaN(edit_lifting_height)) {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('舉升高度請輸入數字')
+            );
+            return;
+        }
+        if (isNaN(edit_weight)) {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('本身重量請輸入數字')
+            );
+            return;
+        }
+        if (isNaN(edit_rotation_diameter)) {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('旋轉直徑請輸入數字')
+            );
+            return;
+        }
+        if (isNaN(edit_rated_speed)) {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('運行速度請輸入數字')
+            );
+            return;
+        }
+        if (isNaN(edit_rotation_speed)) {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('旋轉速度請輸入數字')
+            );
+            return;
+        }
+        //endregion
+
+        //未輸入資料時
+        if (action === 'add') {
+            if (edit_agv_id === '' || edit_agv_name === '' || edit_group_id == '') {
+                toastr.error(
+                    globalDoc.getTextByKey('error'),
+                    globalDoc.getTextByKey('輸入資料不完整')
+                );
+                return;
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+                guid = response.guid;
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+                if (action == "add") {
+
+                    $('#dg').datagrid('insertRow', {
+                        //index: 15, // 索引從 0
+                        row: {
+                            GUID: guid,
+                            AGV_ID: edit_agv_id,
+                            AGV_NAME: edit_agv_name,
+                            AGV_TYPE: edit_agv_type,
+                            RATED_LOAD: edit_rated_load,
+                            LIFTING_HEIGHT: edit_lifting_height,
+                            WEIGHT: edit_weight,
+                            ROTATION_DIAMETER: edit_rotation_diameter,
+                            NAVIGATION: edit_navigation,
+                            DIMENSION: edit_dimension,
+                            RATED_SPEED: edit_rated_speed,
+                            ROTATION_SPEED: edit_rotation_speed,
+                            AGVGROUP_ID: edit_group_id,
+                            REMARK: edit_remark
+                        }
+                    });
+                } else {
+                    Query(currentPage);
+                }
+
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //tableInitB()群組開啟選擇表
+    function tableInitB(e) {
+        let targetId = choosetargetId;
+        switch (targetId) {
+            case "query_group_id":
+                dataurl = '../api/ApiAgv/GetDataList';
+                break;
+            case "edit_group_id":
+                dataurl = '../api/ApiAgv/GetDataList';
+                break;
+        }
+
+        $('#dgB').datagrid({
+            url: dataurl,
+            method: 'POST',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            height: 350,
+            sortName: 'AGVGROUP_ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'AGVGROUP_ID', title: doc.getTextByKey('群組代碼'), width: '50%', sortable: true },
+                { field: 'AGVGROUP_NAME', title: doc.getTextByKey('群組名稱'), width: '50%', sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                $('#btnChoose').attr('disabled', false);
+                if (choosetargetId === "edit_group_id") {
+                    $('#edit_group_id_input').val(field.AGVGROUP_ID);
+                    agvGroup_guid = field.GUID;
+                }
+                if (choosetargetId === "query_group_id") {
+                    $('#query_group_id_input').val(field.AGVGROUP_ID);
+                }
+            }, onBeforeLoad: function (param) {
+                //if (queryParamsB === null) {
+                //    return true; //無參數時不查詢
+                //} else {
+                //    param.total = queryParamsB.total;
+                //}
+            }, onLoadSuccess: function (rows) {
+                $('#btnQueryChoose').attr('disabled', false);
+                $('#btnChoose').attr('disabled', true);
+                guidB = null;
+            }
+        });
+        //資料換頁工具列文字顯示
+        var p = $('#dgB').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+                break;
+        }
+    }
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+        });
+    });
+</script>

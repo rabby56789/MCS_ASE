@@ -1,0 +1,141 @@
+﻿
+/*日曆 - for air-datepicker-master */
+.datepicker {
+    z-index: 1050;
+}
+/*日曆元件加上圖示*/
+.icon-datepicker {
+    position: absolute;
+    /*z-index: var(--label-z-index);*/
+    right: 25px;
+    top: 5px;
+    font-size: 1.5rem;
+}
+
+    .icon-datepicker::before {
+        font-family: "Font Awesome 5 free";
+        font-weight: 500;
+        content: "\f073";
+        color: white;
+    }
+
+.button, .datepicker--button {
+    background: #58699C;
+    filter: none;
+    width: 80px;
+    height: 40px;
+    line-height: 38px;
+    float: right;
+    text-align: center;
+    color: white;
+}
+.button_long{
+    background: #58699C;
+    filter: none;
+    width: 120px;
+    height: 40px;
+    line-height: 38px;
+    float: right;
+    text-align: center;
+    color: white;
+}
+.button_short{
+    background: #58699C;
+    filter: none;
+    width: 80px;
+    height: 40px;
+    line-height: 38px;
+    /*float: right;*/
+    text-align: center;
+    color: white;
+}
+
+
+    .button:hover, .datepicker--button:hover, .button_long:hover {
+        color: #FFF;
+        background: #6C99D4;
+    }
+
+.form-control {
+    letter-spacing: 1px;
+}
+
+    .form-control:focus {
+        color: #6C99D4;
+    }
+
+    .form-control:disabled, .form-control[readonly] {
+        background: #FFF;
+    }
+
+.datepicker, .datepicker--pointer {
+    background: linear-gradient( 135deg, #48709A 0%,#48709A 60%, #8F52A6 100%);
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+    color: #fff;
+    background-color: #434343;
+    /* border-color: #007bff; */
+}
+.btn.disabled, .btn:disabled {
+    opacity: 1;
+}
+
+.btn-success:not(:disabled):not(.disabled).active, .btn-success:not(:disabled):not(.disabled):active, .show > .btn-success.dropdown-toggle,
+.btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active, .show > .btn-secondary.dropdown-toggle {
+    color: #fff;
+    background-color: #6C99D4;
+    border-color: #6C99D4;
+}
+
+    .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
+        background: #6C99D4;
+        border: none
+    }
+
+        .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show > .btn-primary.dropdown-toggle:focus {
+            outline: 0;
+            box-shadow: none;
+        }
+
+    .modal-content .modal-body {
+        padding:60px 5% 5px 5%;
+        max-height:600px;
+        overflow-y:auto;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .datepicker {
+        box-shadow: 1px 0px 5px 1px #d9ffff;
+        color: var(--fontcolor);
+    }
+
+    .datepicker--cell.-focus-, .datepicker--nav-action:hover, .datepicker--nav-title:hover, .datepicker--time-current-hours:after,
+    .datepicker--time-current-minutes:after {
+        background: transparent;
+    }
+
+    .datepicker--cell.-focus-, .datepicker--time-current-hours:after, .datepicker--time-current-minutes:after {
+        border: 1px solid var(--titlecolor);
+    }
+
+    .datepicker--time-row input {
+        border: transparent;
+    }
+
+    .datepicker--cell-day.-other-month-, .datepicker--cell-year.-other-decade- {
+        color: var(--hovercolor);
+    }
+
+    .lbl-tilde {
+        position: relative;
+        font-weight: 500;
+        font-size: 1.5em;
+        color: white;
+        right: 0.3em;
+        top: 0.3rem;
+        width: 0;
+        text-align: center;
+    }
+
+

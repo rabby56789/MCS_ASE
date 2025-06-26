@@ -1,0 +1,96 @@
+﻿.dashboard-fix-cardtop {
+    position: absolute;
+    bottom: 80px;
+}
+
+.dashboard-shadow {
+    box-shadow: 0px 0px 10px #9b9999;
+}
+
+/*看板上方標題*/
+.dashboard-card-title {
+    font-size: 16px;
+    padding-top: 20px;
+    text-align: end;
+}
+
+/*看板顯示數字*/
+.dashboard-card-number {
+    font-size: 28px;
+    text-align: end;
+}
+
+/*看板小字上方線條*/
+.dashboard-card-line {
+    margin-top: 100px;
+    border: 1px solid #dcd9d9;
+    width: 90%;
+    align-self: center;
+}
+
+/*看板下方小字*/
+.dashboard-card-footnote {
+    color: #9b9999;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.dashboard-mb {
+    margin-bottom: 50px;
+}
+
+.dashboard-chart-card {
+    align-items: center;
+}
+
+/*統計圖表容器*/
+.dashboard-chart-content {
+    margin-top: 40%;
+    font-size: 20px;
+    width: 90%;
+    color: #5e5c5c;
+    text-align: left;
+}
+
+.dashboard-chart-line {
+    margin-top: 20px;
+    border: 1px solid #dcd9d9;
+    width: 90%;
+    align-self: center;
+}
+
+.dashboard-fix-charttop {
+    border-radius: 5px;
+    position: absolute;
+    top: -25px;
+    width: 90%;
+}
+
+.dashboard-chart-mb {
+    margin-bottom: 40px;
+}
+
+.dashboard-padding-reset {
+    padding: 0 10px;
+}
+
+/*@media (max-width: 992px) {
+    .side-container {
+        display: none;
+    }
+    .content-page {
+        margin-right: 0;
+    }
+}
+@media (max-width: 576px) {
+    .side-container {
+        display: none;
+    }
+    .content-page {
+        margin-right: 0;
+    }
+}
+*/
+
+
+

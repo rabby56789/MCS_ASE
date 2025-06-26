@@ -1,0 +1,18 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "map_status": "MAP狀態",
+  "car_status": "車子型態",
+  "status_name": "狀態名稱",
+  "agv_brand": "AGV廠牌",
+  "agv_item": "AGV型號",
+  "agv_status": "AGV狀態",
+  "remark": "說明"
+}

@@ -1,0 +1,48 @@
+﻿{
+  "name": "命令名稱",
+  "command": "命令ID",
+  "dicount": "DI筆數",
+  "docount": "DO筆數",
+
+  "ip": "IP",
+  "type": "DI/DO設備類別",
+  "index": "Index",
+  "signal_0": "訊號0",
+  "signal_1": "訊號1",
+
+  "createDetailToGroup": "選擇要加至群組的詳細資料",
+
+
+  "searchCondition": "查詢條件",
+  "remark": "說明",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "import": "匯入",
+  "exportExcel": "匯出excel",
+  "selectUserToGroup": "選擇要加至群組的使用者",
+  "dateRangeError": "日期範圍輸入錯誤",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+
+
+
+  "content": "命令內容(例如:0,1,0,1)",
+  "iotdeviceName": "Iot設備名稱",
+  "iotdeviceSnkey": "Iot設備snkey",
+  "iotdeviceIP": "Iot設備IP",
+  "mqserver": "MQ Server",
+  "iotdevice_name": "Iot設備名稱",
+  "iotdevice_snkey": "Iot設備snkey",
+  "iotdevice_ip": "Iot設備IP",
+  "selectIotdevice": "選擇Iot設備",
+  "testCmdMqtt": "測試命令MQTT",
+  "test": "測試",
+  "topic": "頻道",
+  "publish": "發佈",
+  "subscribe": "訂閱",
+  "getMsg": "Get",
+  "clientid": "Client Id"
+}

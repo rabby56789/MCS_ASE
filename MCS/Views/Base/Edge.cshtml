@@ -1,0 +1,1086 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/73d7badb09.js" crossorigin="anonymous"></script>
+}
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="edge" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret">查詢條件</span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <select id="query_factory" name="FACTORY_GUID" class="form-control required"></select>
+                            <label data-lngKey="factory" for="Combo-Device"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input agv-content">
+                            <input id="query_floor_input" name="FLOOR_NAME" class="form-control" />
+                            <label for="query_floor" data-lngKey="floor"></label>
+                            <button data-lngKey="query_floor" type="button" id="query_floor" class="button queryBtn float-right log">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input agv-content">
+                            <input id="query_map_input" name="MAP_NAME" class="form-control" />
+                            <label for="query_map" data-lngKey="map"></label>
+                            <button data-lngKey="query_map" type="button" id="query_map" class="button queryBtn float-right log">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 form-group">
+
+                    </div>
+                    <div class="col-md-6">
+                        <!--floating-labels使用必加div外框與class屬性-->
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_1" name="NODE_ID" type="text" class="form-control" />
+                            <!--label必須放在input之後,否則文字會在輸入框內-->
+                            <label data-lngKey="nodeid" for="query_1"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_2" name="NEIGHB_ID" type="text" class="form-control" />
+                            <label data-lngKey="neighbid" for="query_2"></label>
+                        </div>
+                    </div>
+                    <div class="col-md align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton log" plain="true" data-lngKey="add"><i class="fas fa-file-medical fa-lg"></i></a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton log" plain="true" data-lngKey="edit"><i class="fas fa-file-signature fa-lg"></i></a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton log" plain="true" data-lngKey="delete"><i class="fas fa-trash-alt fa-lg"></i></a>
+            <a href="#" id="btnExportOnGrid" class="easyui-linkbutton log" plain="true" data-lngKey="exportExcel"><i class="fas fa-file-export fa-lg"></i></a>
+        </div>
+        <table id="dg"></table>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade" role="dialog">
+        <div class="modal-dialog node-modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit">
+                        <div class="row">
+                            <div id="divAdd" class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <select id="edit_factory" name="FACTORY_GUID" class="form-control required"></select>
+                                    <label data-lngKey="factory" for="Combo-Device"></label>
+                                </div>
+                            </div>
+
+                            <div id="divAdd2" class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="edit_floor" name="FLOOR_GUID" class="form-control" />
+                                    <label for="edit_floor" data-lngKey="floor"></label>
+                                    <button data-lngKey="edit_floor" type="button" id="edit_floor" class="button queryBtn float-right log">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="divAdd3" class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="edit_map_input" name="MAP_GUID" class="form-control" />
+                                    <label for="edit_map" data-lngKey="map"></label>
+                                    <button data-lngKey="edit_map" type="button" id="edit_map" class="button queryBtn float-right log">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <select id="map_enable" name="MAP_ENABLE" class="form-control required">
+                                        <option value="1">ON</option>
+                                        <option value="0">OFF</option>
+                                    </select>
+                                    <label data-lngKey="map_enable" for="Combo-Device"></label>
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_nodeid" name="NODE_ID" type="text" class="form-control" />
+                                    <label for="edit_nodeid" data-lngKey="nodeid"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_neighbid" name="NEIGHB_ID" type="text" class="form-control" />
+                                    <label for="edit_neighbid" data-lngKey="neighbid"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_distance" name="DISTANCE" type="text" class="form-control" />
+                                    <label for="edit_distance" data-lngKey="distance"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_rever" name="REVER" type="text" class="form-control" />
+                                    <label for="edit_rever" data-lngKey="rever"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_speed" name="SPEED" type="text" class="form-control" />
+                                    <label for="edit_speed" data-lngKey="speed"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_ultrasonic" name="ULTRASONIC" type="text" class="form-control" />
+                                    <label for="edit_ultrasonic" data-lngKey="ultrasonic"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_leftwidth" name="LEFTWIDTH" type="text" class="form-control" />
+                                    <label for="edit_leftwidth" data-lngKey="leftwidth"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_rightwidth" name="RIGHTWIDTH" type="text" class="form-control" />
+                                    <label for="edit_rightwidth" data-lngKey="rightwidth"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_roadleftwidth" name="ROADLEFTWIDTH" type="text" class="form-control" />
+                                    <label for="edit_roadleftwidth" data-lngKey="roadleftwidth"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_roadrightwidth" name="ROADRIGHTWIDTH" type="text" class="form-control" />
+                                    <label for="edit_roadrightwidth" data-lngKey="roadrightwidth"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_robottype" name="ROBOTTYPE" type="text" class="form-control" />
+                                    <label for="edit_robottype" data-lngKey="robottype"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_poddir" name="PODDIR" type="text" class="form-control" />
+                                    <label for="edit_poddir" data-lngKey="poddir"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_startdir" name="STARTDIR" type="text" class="form-control" />
+                                    <label for="edit_startdir" data-lngKey="startdir"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_stopdir" name="STOPDIR" type="text" class="form-control" />
+                                    <label for="edit_stopdir" data-lngKey="stopdir"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_alarmvoice" name="ALARMVOICE" type="text" class="form-control" />
+                                    <label for="edit_alarmvoice" data-lngKey="alarmvoice"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_preforklift" name="PREFORKLIFT" type="text" class="form-control" />
+                                    <label for="edit_preforklift" data-lngKey="preforklift"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_rotate" name="ROTATE" type="text" class="form-control" />
+                                    <label for="edit_rotate" data-lngKey="rotate"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_lasertype" name="LASERTYPE" type="text" class="form-control" />
+                                    <label for="edit_lasertype" data-lngKey="lasertype"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_podlasertype" name="PODLASERTYPE" type="text" class="form-control" />
+                                    <label for="edit_podlasertype" data-lngKey="podlasertype"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_sensorswitch" name="SENSORSWITCH" type="text" class="form-control" />
+                                    <label for="edit_sensorswitch" data-lngKey="sensorswitch"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_carrytype" name="CARRYTYPE" type="text" class="form-control" />
+                                    <label for="edit_carrytype" data-lngKey="carrytype"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_ctnrtype" name="CTNRTYPE" type="text" class="form-control" />
+                                    <label for="edit_ctnrtype" data-lngKey="ctnrtype"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_ctrlpoint" name="CTRLPOINT" type="text" class="form-control" />
+                                    <label for="edit_ctrlpoint" data-lngKey="ctrlpoint"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_remark" name="REMARK" type="text" class="form-control" />
+                                    <label for="edit_remark" data-lngKey="remark"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--樓層選擇視窗-->
+    <div id="modal_Floor" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="floorModalTitle" class="modal-title"></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formQueryB">
+                        <div class="row">
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="query_floorId" name="ID" type="text" class="form-control" />
+                                    <label for="query_floorId" data-lngKey="floorId"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="query_FloorName" name="NAME" type="text" class="form-control" />
+                                    <label for="query_FloorName" data-lngKey="floorName"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <button type="button" id="btnQueryFloor" class="btn btn-primary log ajaxRequest" data-lngKey="search"></button>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="dgB"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnFloor" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--地圖選擇視窗-->
+    <div id="modal_Map" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="mapModalTitle" class="modal-title"></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formQueryC">
+                        <div class="row">
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="query_mapId" name="ID" type="text" class="form-control" />
+                                    <label for="query_mapId" data-lngKey="mapId"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="query_mapName" name="NAME" type="text" class="form-control" />
+                                    <label for="query_mapName" data-lngKey="mapName"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <button type="button" id="btnQueryMap" class="btn btn-primary log ajaxRequest" data-lngKey="search"></button>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="dgC"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnMap" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let snowTargetId
+    let factoryGUID;
+    let editfactoryGUID;
+    let queryfactoryGUID;
+    let importfactoryGUID;
+    let floortargetId;
+    let maptargetId;
+    let floorGUID = "";
+    let floorNAME = "";
+    let mapGUID = "";
+    let mapNAME = "";
+    let addfloorGUID;
+    let queryParams, queryParamsB, queryParamsC;
+    let doc;
+    let bannedModify = []; //禁止修改的欄位input name
+
+    //頁面元件初始化
+    function PageInit() {
+        $('#dg').datagrid({
+            url: '../api/ApiEdge/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'NODE_ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'MAP_NAME', title: doc.getTextByKey('mapName'), sortable: true },
+                { field: 'MAP_QRCODE', title: doc.getTextByKey('mapQrcode'), sortable: true },
+                { field: 'NODE_ID', title: doc.getTextByKey('nodeid'), sortable: true },
+                { field: 'NEIGHB_ID', title: doc.getTextByKey('neighbid'), sortable: true },
+                { field: 'MAPENABLE', title: doc.getTextByKey('map_enable'), sortable: true },
+                { field: 'REMARK', title: doc.getTextByKey('remark') }
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedIndex = index;
+
+                $('#btnEdit').linkbutton('enable');
+                $('#btnDelete').linkbutton('enable');
+
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    return false; //預設初次載入頁面不查詢
+                } else {
+                    if (floorGUID === undefined) {
+                        //return false; //無參數時不查詢
+                    } else {
+                        //param.FLOOR_GUID = floorGUID;
+                    }
+                    if (mapGUID === undefined) {
+                        //return false; //無參數時不查詢
+                    } else {
+                        //param.MAP_GUID = mapGUID;
+                    }
+                }
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+
+                $('#btnEdit').linkbutton('disable');
+                $('#btnDelete').linkbutton('disable');
+                //bindresize(this);
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+        $('#btnExportOnGrid').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let tagArr = document.getElementsByTagName("input");
+        for (let i = 0; i < tagArr.length; i++) {
+            tagArr[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#modal_Floor').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#modal_Map').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        //#endregion
+
+        setNotNull();
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+        refreshDorpDownListItems("edit_factory", "../api/ApiMap/GetDataList", "");
+        refreshDorpDownListItems("query_factory", "../api/ApiMap/GetDataList", "");
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', () => { Query(1) });
+        $('#btnAdd').on('click', Add);
+        $('#btnEdit').on('click', Edit);
+        $('#btnDelete').on('click', Delete);
+        $('#btnExportOnGrid').on('click', ExportOnClick);
+        $('#btnAccept').on('click', Accept);
+        $('.btn-confirm').on('click', Confirm);
+
+        $('#edit_floor').on('click', FloorSnow);
+        $('#query_floor').on('click', FloorSnow);
+        $('#edit_map').on('click', FloorSnow);
+        $('#query_map').on('click', FloorSnow);
+
+        $('#edit_factory').on('change', onSelectOptionChange);
+        $('#query_factory').on('change', onSelectOptionChange);
+
+        $('#btnQueryFloor').on('click', queryB);
+        $('#btnFloor').on('click', floor);
+        $('#btnQueryMap').on('click', queryC);
+        $('#btnMap').on('click', map);
+        //$('#query_factory').on('change', onSelectOptionChange);
+        //$('#query_phase').on('change', onSelectOptionChange);
+        //$('#query_depart').on('change', onSelectOptionChange);
+
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+        $('#modal_editb').on('show.bs.modal', onEditModalShowB);
+        $('#modal_Floor').on('show.bs.modal', beforeFloorModalShow);
+        $('#modal_Floor').on('shown.bs.modal', onFloorModalShow);
+        $('#modal_Map').on('show.bs.modal', beforeFloorModalShow);
+        $('#modal_Map').on('shown.bs.modal', onFloorModalShow);
+        $(window).on("resize", resizeLayout);
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#formQueryPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+    }
+
+    //查詢
+    async function Query(pageIdx) {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        queryParams = $('#formQuery').serializeObject();
+        queryParams.FLOOR_GUID = floorGUID;
+        queryParams.MAP_GUID = mapGUID;
+        if (queryParams.FLOOR_NAME === "") {
+            queryParams.FLOOR_GUID = "";
+        }
+        if (queryParams.MAP_NAME === "") {
+            queryParams.MAP_GUID = "";
+        }
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiEdge/Count",
+                data: queryParams,
+                dataType: "json",
+                success: function (response) {
+                    queryParams.total = response.count;
+                    resolve(queryParams);
+                }
+            });
+        }).then((parms) => {
+            $("#dg").datagrid('options').queryParams = parms;
+            $('#dg').datagrid('gotoPage', pageIdx);
+
+            return;
+        }).then(() => {
+            $('#btnExportOnGrid').linkbutton('enable');
+            $('.ajaxRequest').attr('disabled', false);
+        }).finally(() => {
+            $("#query_floor_input").val('');
+            $("#query_map_input").val('');
+        });
+    }
+    //查詢B表
+    function queryB() {
+        queryParamsB = new Object();
+        queryParamsB = $('#formQueryB').serializeObject();
+        $('#dgB').datagrid('options').queryParams = queryParamsB;
+        $('#dgB').datagrid('gotoPage', 1);
+    }
+    function queryC() {
+        queryParamsC = new Object();
+        queryParamsC = $('#formQueryC').serializeObject();
+        $('#dgC').datagrid('options').queryParams = queryParamsC;
+        $('#dgC').datagrid('gotoPage', 1);
+    }
+    //樓層選擇
+    function floor() {
+        $('#modal_Floor').modal('hide');
+    }
+    //地圖選擇
+    function map() {
+        $('#modal_Map').modal('hide');
+    }
+    //新增,清空欄位後開窗
+    function Add() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'add';
+        //selectedGUID = "";
+
+        let elm = document.getElementById("formEdit");
+
+        for (let i = 0; i < elm.length; i++) {
+            elm[i].value = "";
+            elm[i].disabled = false;
+        }
+
+        $('#modal_edit').modal('show');
+    }
+
+    //編輯
+    function Edit() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        let data = { GUID: selectedGUID };
+        action = 'edit';
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiEdge/GetOneByGUID",
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                let userData = data.rows[0];
+                let elm = document.getElementById("formEdit");
+
+                for (let i = 0; i < elm.length; i++) {
+                    let name = elm[i].name;
+                    $(elm[i]).val(userData[name]);
+
+                    if (bannedModify.includes(name)) {
+
+                    }
+                }
+            },
+            complete: function (url) {
+                $('#modal_edit').modal('show');
+            }
+        });
+    }
+
+    //刪除
+    function Delete() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'delete';
+
+        JQMessageBox(
+            globalDoc.getTextByKey('confirm'),
+            globalDoc.getTextByKey('delMsg'),
+            {
+                'Y': globalDoc.getTextByKey('y'),
+                'N': globalDoc.getTextByKey('n')
+            },
+            Confirm
+        );
+    }
+    //樓層選擇開窗
+    function FloorSnow(e) {
+        let targetId = e.currentTarget.id;
+        snowTargetId = e.target.id;
+
+        switch (targetId) {
+            case "query_floor":
+                factoryGUID = queryfactoryGUID;
+                floortargetId = targetId;
+                $('#modal_Floor').modal('show');
+                break;
+            case "edit_floor":
+                factoryGUID = editfactoryGUID;
+                floortargetId = targetId;
+                $('#modal_Floor').modal('show');
+                break;
+            case "import_floor":
+                factoryGUID = importfactoryGUID;
+                floortargetId = targetId;
+                $('#modal_Floor').modal('show');
+                break;
+            case "query_map":
+                factoryGUID = queryfactoryGUID;
+                maptargetId = targetId;
+                $('#modal_Map').modal('show');
+                break;
+            case "edit_map":
+                factoryGUID = editfactoryGUID;
+                maptargetId = targetId;
+                $('#modal_Map').modal('show');
+                break;
+        }
+
+    }
+
+    function beforeFloorModalShow(e) {
+        let targetId = e.target.id;
+        let inputElms;
+        switch (targetId) {
+            case "modal_Floor":
+                inputElms = document.forms["formQueryB"].getElementsByTagName("input");
+                //清空輸入欄位
+                for (let i = 0; i < inputElms.length; i++) {
+                    inputElms[i].value = "";
+                }
+                $('#floorModalTitle').text(doc.getTextByKey("selectFloor"));
+                queryParamsB = null;
+                break;
+            case "modal_Map":
+                inputElms = document.forms["formQueryC"].getElementsByTagName("input");
+                //清空輸入欄位
+                for (let i = 0; i < inputElms.length; i++) {
+                    inputElms[i].value = "";
+                }
+                $('#mapModalTitle').text(doc.getTextByKey("selectMap"));
+                queryParamsC = null;
+                break;
+        }
+    }
+    //事件:樓層選擇視窗開啟
+    function onFloorModalShow(e) {
+        let targetId = e.target.id;
+        switch (targetId) {
+            case "modal_Floor":
+                $('#btnFloor').text(globalDoc.getTextByKey('ok'));
+
+                tableInitB();
+                $('#dgB').datagrid('loadData', { "total": 0, "rows": [] });
+                $('#btnFloor').attr('disabled', true);
+            case "modal_Map":
+                $('#btnMap').text(globalDoc.getTextByKey('ok'));
+
+                tableInitC();
+                $('#dgC').datagrid('loadData', { "total": 0, "rows": [] });
+                $('#btnMap').attr('disabled', true);
+                break;
+        }
+    }
+    function tableInitB() {
+        $('#dgB').datagrid({
+            url: '../api/ApiFloor/Query',
+            method: 'POST',
+            singleSelect: true,
+            height: 350,
+            sortName: 'ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'ID', title: doc.getTextByKey('floorId'), width: '50%', sortable: true },
+                { field: 'NAME', title: doc.getTextByKey('floorName'), width: '50%', sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                $('#btnFloor').attr('disabled', false);
+                floorGUID = field.GUID;
+                floorNAME = field.NAME;
+                if (floortargetId == "edit_floor") {
+                    $('#edit_floor_input').val(field.NAME);
+                    $('#edit_map_input').val("");
+                }
+                if (floortargetId == "query_floor") {
+                    $('#query_floor_input').val(field.NAME);
+                    $('#query_map_input').val("");
+                }
+            }, onBeforeLoad: function (param) {
+                if (queryParamsB === null) {
+                    return false; //無參數時不查詢
+                } else {
+                    param.FACTORY_GUID = factoryGUID;
+                }
+            }, onLoadSuccess: function (rows) {
+                $('#btnQueryFloor').attr('disabled', false);
+                $('#btnFloor').attr('disabled', true);
+                guidB = null;
+            }
+        });
+
+    }
+    function tableInitC() {
+        $('#dgC').datagrid({
+            url: '../api/ApiMap/Query',
+            method: 'POST',
+            singleSelect: true,
+            height: 350,
+            sortName: 'ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'ID', title: doc.getTextByKey('mapId'), width: '50%', sortable: true },
+                { field: 'NAME', title: doc.getTextByKey('mapName'), width: '50%', sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                $('#btnMap').attr('disabled', false);
+                mapGUID = field.GUID;
+                mapNAME = field.NAME;
+                if (maptargetId == "edit_map") {
+                    $('#edit_map_input').val(field.NAME);
+                }
+                if (maptargetId == "query_map") {
+                    $('#query_map_input').val(field.NAME);
+                }
+            }, onBeforeLoad: function (param) {
+                if (queryParamsC === null) {
+                    return false; //無參數時不查詢
+                } else {
+                    if (floorGUID != undefined) {
+                        param.FLOOR_GUID = floorGUID;
+                    }
+                    if (factoryGUID != undefined) {
+                        param.FACTORY_GUID = factoryGUID;
+                    }
+                }
+            }, onLoadSuccess: function (rows) {
+                $('#btnQueryMap').attr('disabled', false);
+                $('#btnMap').attr('disabled', true);
+                guidC = null;
+            }
+        });
+
+    }
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShowB(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiEdge/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let data, actionUrl, guid;
+        let edit_noteid = $('#edit_noteid').val();
+        let edit_neighbid = $('#edit_neighbid').val();
+        let edit_remark = $('#edit_remark').val();
+        $('#modal_edit').modal('hide');
+
+        data = $('#formEdit').serializeObject();
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+            data.FLOOR_GUID = floorGUID;
+            data.MAP_GUID = mapGUID;
+        } else {
+            data.GUID = selectedGUID
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiEdge/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiEdge/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiEdge/Delete";
+                break;
+        }
+        //取得目前頁面
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+                guid = response.guid;
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+                if (action == "add") {
+
+                    $('#dg').datagrid('insertRow', {
+                        //index: 15, // 索引從 0
+                        row: {
+                            GUID: guid,
+                            ID: edit_id,
+                            NAME: edit_name,
+                            REMARK: edit_remark
+                        }
+                    });
+                } else {
+                    Query(currentPage);
+                }
+
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+    //#region 下拉選單方法群
+
+    //刷新下拉選單項目(參數:目標select元件ID,資料來源URL,傳送參數) [是否移至共用區?]
+    function refreshDorpDownListItems(targetSelectElementId, dataSourceUrl, parameters) {
+        let elm = $('#' + targetSelectElementId);
+        let optionElm = document.createElement("option");
+        optionElm.setAttribute("value", "");
+
+        //setElmLanguage(optionElm, "plzChoice");
+
+        //移除並加入預設選項
+        elm.find('option').remove().end();
+        elm.append(optionElm);
+
+        //沒輸入資料來源Url直接結束
+        if (typeof (dataSourceUrl) == undefined) {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: dataSourceUrl,
+            data: parameters,
+            dataType: "json",
+            success: function (data) {
+                data.rows.forEach(function (item) {
+                    elm.append(`<option value="${item.Key}">${item.Value}</option>`);
+                });
+
+                elm.prop('selectedIndex', 0);
+            }
+        });
+    }
+
+    //下拉選單更改選取
+    function onSelectOptionChange(e) {
+        let targetId = e.target.id;
+        let selectedValue = e.target.value;
+        switch (targetId) {
+            case "query_factory":
+                queryfactoryGUID = e.target.value;
+                $('#query_floor').val("");
+                $('#query_map').val("");
+                floorGUID = "";
+                mapGUID = "";
+                break;
+            case "edit_factory":
+                editfactoryGUID = e.target.value;
+                $('#edit_floor').val("");
+                $('#edit_map').val("");
+                floorGUID = "";
+                mapGUID = "";
+                break;
+        }
+        //依照更改下拉選單關聯性刷新
+        //switch (targetId) {
+        //    case "query_factory": //廠
+        //        refreshDorpDownListItems('query_phase');
+        //        refreshDorpDownListItems('query_depart');
+        //        refreshDorpDownListItems('query_company');
+        //        break;
+        //    case "query_phase": //區
+        //        refreshDorpDownListItems('query_depart');
+        //        refreshDorpDownListItems('query_company');
+        //        break;
+        //    case "query_depart": //部門
+        //        refreshDorpDownListItems('query_company');
+        //        break;
+        //}
+
+        //if (selectedValue != "") {
+        //    switch (targetId) {
+        //        case "query_factory":  //廠->區
+        //            refreshDorpDownListItems('query_phase', '../api/ApiFactory/GetListOfPhase', { "FACTORY": selectedValue });
+        //            break;
+        //        case "query_phase": //區->部門
+        //            refreshDorpDownListItems('query_depart', '../api/ApiFactory/GetListOfDepart', { "PHASE": selectedValue });
+        //            break;
+        //        case "query_depart": //部門->委外廠商
+        //            refreshDorpDownListItems('query_company', '../api/ApiFactory/GetListOfCompany', { "DEPART": selectedValue });
+        //            break;
+        //    }
+        //}
+    }
+    //#endregion
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+        });
+    });
+</script>

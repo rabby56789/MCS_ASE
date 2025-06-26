@@ -1,0 +1,159 @@
+﻿.modal-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.modal-header {
+    padding: 5px 15px;
+}
+
+.modal-title {
+    height: 100%;
+    line-height: 2.5rem;
+    font-size: 1.2rem;
+    padding-left: 1rem;
+    letter-spacing: 4px;
+    color: white;
+}
+
+.modal-content {
+    padding-left: 1em;
+    padding-right: 1em;
+    background: transparent;
+    border: none;
+    color: #232E49;
+}
+
+.modal.show .modal-dialog {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+}
+
+@media (min-width: 576px) {
+    .node-modal-dialog {
+        max-width: 1000px !important;
+        margin: 50px auto !important;
+    }
+    .modal-dialog {
+        margin: 0;
+        width: 500px;
+    }
+    
+}
+
+.modal-content .modal-header {
+    background: linear-gradient(90deg, #48709A 0%,#48709A 60%, #8F52A6 100%);
+    border: 10px;
+    width: 90%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 28px;
+    z-index: 1;
+    border-radius: 5px;
+}
+
+    .modal-content .modal-header.del {
+        background: #D51D1D;
+    }
+
+    .modal-content .modal-header .modal-title {
+        width: 100%;
+        text-align: center;
+    }
+
+.modal-content .modal-body, .modal-content .modal-footer {
+    background: #FFF;
+    color: #232E49;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 5%;
+}
+
+    .modal-content .modal-body span {
+        color: #ffffff;
+    }
+
+.modal-body > form {
+    margin-top: 50px;
+}
+
+    .modal-body > form > button > span {
+        color: white;
+    }
+
+.modal-body > #msg {
+    display: inline-block;
+    width: auto;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    color:black;
+}
+
+.modal-content .btn {
+    background: #58699C;
+    filter: none;
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    color: #FFF;
+}
+
+    .modal-content .btn:hover, .modal-content > .btn:active {
+        background: #6C99D4;
+        border: none
+    }
+
+    .modal-content .btn:focus {
+        outline: 0;
+        box-shadow: none;
+    }
+
+.modal-footer > * {
+    margin-right: 0;
+}
+
+.modal-footer > .btn-success:not(:disabled):not(.disabled).active:focus, .modal-footer > .btn-success:not(:disabled):not(.disabled):active:focus, .modal-footer > .show > .btn-success.dropdown-toggle:focus,
+.btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-secondary:not(:disabled):not(.disabled):active:focus, .show > .btn-secondary.dropdown-toggle:focus {
+    box-shadow: none;
+}
+
+.queryBtn {
+    width: 50px !important;
+    height: 38px !important;
+    position: absolute;
+    right: 0;
+    border-radius: 0.25rem;
+    overflow:hidden;
+}
+
+    .queryBtn span {
+        /*display: none;*/
+    }
+    .queryBtn svg {
+        /*margin-left: 13px;*/
+    }
+
+.agv-content {
+    display: inline-flex;
+    width: 100%;
+}
+
+.clearBtn {
+    background: rgba(225,225,225,0) !important;
+    width: 50px !important;
+    height: 38px !important;
+    position: absolute;
+    right: 0;
+    border-radius: 0.25rem;
+    border: none;
+    overflow: hidden;
+    color: black !important;
+    display: none;
+}

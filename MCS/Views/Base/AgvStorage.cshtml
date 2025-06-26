@@ -1,0 +1,819 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/73d7badb09.js" crossorigin="anonymous"></script>
+    
+}
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="agvstorage" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret">查詢條件</span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input agv-content">
+                            <input id="query_equipment_input" name="EQUIPMENT_NAME" class="form-control">
+                            <label for="query_equipment" data-lngKey="equipment"></label>
+                            <button data-target-name="query_equipment" type="button" id="query_equipment" class="button queryBtn float-right log">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input agv-content">
+                            <input id="query_storage_input" name="STORAGE_NAME" class="form-control" />
+                            <label for="query_storage" data-lngKey="storage"></label>
+                            <button data-target-name="query_storage" type="button" id="query_storage" class="button queryBtn float-right log">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12 align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton log" plain="true" data-lngKey="add"><i class="fas fa-file-medical fa-lg"></i></a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton log" plain="true" data-lngKey="edit"><i class="fas fa-file-signature fa-lg"></i></a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton log" plain="true" data-lngKey="delete"><i class="fas fa-trash-alt fa-lg"></i></a>
+            <a href="#" id="btnExportOnGrid" class="easyui-linkbutton log" plain="true" data-lngKey="exportExcel"><i class="fas fa-file-export fa-lg"></i></a>
+        </div>
+        <table id="dg"></table>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit">
+                        <div class="row">
+                            <div id="divAdd" class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="edit_equipment_input" name="EQUIPMENT_NAME" class="form-control">
+                                    <label for="edit_equipment" data-lngKey="equipment"></label>
+                                    <button data-target-name="query_equipment" type="button" id="edit_equipment" class="button queryBtn float-right log">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+
+                            <div id="divAdd2" class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="edit_storage_input" name="STORAGE_NAME" class="form-control" />
+                                    <label for="edit_storage" data-lngKey="storage"></label>
+                                    <button data-target-name="query_storage" type="button" id="edit_storage" class="button queryBtn float-right log">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_remark" name="REMARK" type="text" class="form-control" />
+                                    <label for="edit_remark" data-lngKey="remark"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--機台、儲位選擇視窗-->
+    <div id="modal_Query" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="queryModalTitle" class="modal-title"></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formQueryB">
+                        <div class="row">
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="query_chooseId" name="ID" type="text" class="form-control" />
+                                    <label for="query_chooseId" data-lngKey="ID"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="query_chooseName" name="NAME" type="text" class="form-control" />
+                                    <label for="query_chooseName" data-lngKey="NAME"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <button type="button" id="btnQueryChoose" class="btn btn-primary log ajaxRequest" data-lngKey="search"></button>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="dgB"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnChoose" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+
+    let equipmenttargetId;
+    let equipmentGUID = "";
+    let addequipmentGUID;
+    let equipmentNAME;
+
+    let choosetargetId;
+    let storagetargetId;
+    let storageGUID = "";
+    let storageNAME;
+    let addstorageGUID;
+    let queryParams, queryParamsB;
+    let lastPage;
+    let doc;
+    let bannedModify = []; //禁止修改的欄位input name
+
+    //頁面元件初始化
+    function PageInit(e) {
+        $('#dg').datagrid({
+            url: '../api/ApiAgvStorage/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'GUID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'EQUIPMENT_NAME', title: doc.getTextByKey('equipmentName'), sortable: true },
+                { field: 'STORAGE_NAME', title: doc.getTextByKey('storageName'), sortable: true },
+                { field: 'REMARK', title: doc.getTextByKey('remark') }
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                equipmentGUID = field.EQUIPMENT_GUID;
+                storageGUID = field.STORAGE_GUID;
+                selectedIndex = index;
+                $('#btnEdit').linkbutton('enable');
+                $('#btnDelete').linkbutton('enable');
+
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    //return false; //預設初次載入頁面不查詢
+                    return true; //預設初次載入頁面會查詢
+                } 
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+                $('#btnEdit').linkbutton('disable');
+                $('#btnDelete').linkbutton('disable');
+                //bindresize(this);
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        //$('#btnAdd').linkbutton('disable');
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+        //$('#btnExportOnGrid').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let tagArr = document.getElementsByTagName("input");
+        for (let i = 0; i < tagArr.length; i++) {
+            tagArr[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#modal_Query').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        //#endregion
+
+        setNotNull();
+        
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', () => { Query(1) });
+        $('#query_equipment').on('click', () => { QueryData(1,'equipmentAll') });
+        $('#query_storage').on('click', () => { QueryData(1, 'storageAll') });
+        //Limit找沒配對過的機台
+        //$('#edit_equipment').on('click', () => { QueryData(1,'equipmentLimit') });
+        //$('#edit_storage').on('click', () => { QueryData(1, 'storageLimit') });
+        $('#edit_equipment').on('click', () => { QueryData(1, 'equipmentLimit') });
+        $('#edit_storage').on('click', () => { QueryData(1, 'storageAll') });
+        $('#btnAdd').on('click', Add);
+        $('#btnEdit').on('click', Edit);
+        $('#btnDelete').on('click', Delete);
+        $('#btnExportOnGrid').on('click', ExportOnClick);
+        $('#btnAccept').on('click', Accept);
+
+        $('.btn-confirm').on('click', Confirm);
+        
+        $('#edit_storage').on('click', ChooseSnow);
+        $('#query_storage').on('click', ChooseSnow);
+        $('#edit_equipment').on('click', ChooseSnow);
+        $('#query_equipment').on('click', ChooseSnow);
+        //開查詢表
+        $('#btnQueryChoose').on('click', queryB);
+        $('#btnChoose').on('click', storage);
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+        $('#modal_editb').on('show.bs.modal', onEditModalShowB);
+        $('#modal_Query').on('show.bs.modal', beforeStorageModalShow);
+        $('#modal_Query').on('shown.bs.modal', onStorageModalShow);
+
+        $(window).on("resize", resizeLayout);
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#formQueryPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_storage').addClass('required');
+        $('#edit_equipment').addClass('required');
+    }
+
+    //查詢
+    async function Query(pageIdx) {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        queryParams = $('#formQuery').serializeObject();
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiAgvStorage/Count",
+                data: queryParams,
+                dataType: "json",
+                success: function (response) {
+                    queryParams.total = response.count;
+                    resolve(queryParams);
+
+                }
+            });
+        }).then((parms) => {
+            $("#dg").datagrid('options').queryParams = parms;
+            $('#dg').datagrid('gotoPage', pageIdx);
+        }).then(() => {
+            $('#btnExportOnGrid').linkbutton('enable');
+            $('.ajaxRequest').attr('disabled', false);
+        }).finally(() => {
+            $('#query_equipment_input').val('');
+            $('#query_storage_input').val('');
+        });
+    }
+
+    //查詢機台、儲位Count
+    async function QueryData(pageIdx, selectWhat) {
+        switch (selectWhat) {
+            case "storageAll":
+                queryurl = '../api/ApiAgvStorage/GetStorageCount';
+                break;
+            case "storageLimit":
+                queryurl = '../api/ApiAgvStorage/GetStorageLimitCount';
+                break;
+            case "equipmentAll":
+                queryurl = '../api/ApiAgvStorage/GetEquipmentCount';
+                break;
+            case "equipmentLimit":
+                queryurl = '../api/ApiAgvStorage/GetEquipmentLimitCount';
+                break;
+        }
+
+        queryParamsB = $('#formQueryB').serializeObject();
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: queryurl,
+                data: queryParamsB,
+                dataType: "json",
+                success: function (response) {
+                    queryParamsB.total = response.count;
+                    resolve(queryParamsB);
+
+                }
+            }).then((parms) => {
+                $("#dgB").datagrid('options').queryParams = parms;
+                $('#dgB').datagrid('gotoPage', pageIdx);
+            });
+        });
+    }
+
+    //查詢B表 機台、儲位
+    function queryB() {
+        queryParamsB = new Object();
+        queryParamsB = $('#formQueryB').serializeObject();
+        $('#dgB').datagrid('options').queryParams = queryParamsB;
+        $('#dgB').datagrid('gotoPage', 1);
+    }
+
+    //儲位選擇
+    function storage(e) {
+        $('#modal_Query').modal('hide');
+    }
+
+    //新增,清空欄位後開窗
+    function Add() {
+        equipmentGUID = '';
+        storageGUID = '';
+        if ($(this).linkbutton('options').disabled == true) return;
+        $('#edit_equipment_input').css('background', '#ffffff');
+        action = 'add';
+        //selectedGUID = "";
+
+        let elm = document.getElementById("formEdit");
+
+        for (let i = 0; i < elm.length; i++) {
+            elm[i].value = "";
+            elm[i].disabled = false;
+        }
+        $('#divAdd').show();
+        $('#divAdd2').show();
+        $('#edit_equipment').show();
+        $('#modal_edit').modal('show');
+    }
+
+    //編輯
+    function Edit() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        let data = {
+            GUID: selectedGUID,
+            EQUIPMENT_GUID: equipmentGUID,
+            STORAGE_GUID: storageGUID
+        };
+        action = 'edit';
+        //取得目前頁面
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiAgvStorage/GetOneByGUID",
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                let userData = data.rows[0];
+                let elm = document.getElementById("formEdit");
+
+                for (let i = 0; i < elm.length; i++) {
+                    let name = elm[i].name;
+                    $(elm[i]).val(userData[name]);
+
+                    if (bannedModify.includes(name)) {
+
+                    }
+                }
+                //抓edit後的值給全域變數，要給未輸入且也有值的equipment用
+                equipmentNAME = data.rows[0].EQUIPMENT_NAME;
+                equipmentGUID = data.rows[0].EQUIPMENT_GUID;
+                storageGUID = data.rows[0].STORAGE_GUID;
+                if (action === 'edit') {
+                    $('#edit_equipment_input').attr('disabled', true);
+                    $('#edit_equipment_input').css('background', '#e8e8e8');
+                    $('#edit_equipment').hide();
+                }
+                //Query(currentPage);
+            }, complete: function (url) {
+                action = 'edit';
+                $('#modal_edit').modal('show');
+            }
+        });
+    }
+
+    //刪除
+    function Delete() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'delete';
+
+        JQMessageBox(
+            globalDoc.getTextByKey('confirm'),
+            globalDoc.getTextByKey('delMsg'),
+            {
+                'Y': globalDoc.getTextByKey('y'),
+                'N': globalDoc.getTextByKey('n')
+            },
+            Confirm
+        );
+    }
+
+    //機台、儲位選擇開窗
+    function ChooseSnow(e) {
+        choosetargetId = e.currentTarget.id;
+        $('#modal_Query').modal('show');
+    }
+
+    //事件:儲位選擇視窗開啟之後
+    function beforeStorageModalShow(e) {
+        let targetId = choosetargetId;
+        let inputElms = document.forms["formQueryB"].getElementsByTagName("input");
+        //清空輸入欄位
+        for (let i = 0; i < inputElms.length; i++) {
+            inputElms[i].value = "";
+        }
+        //變更標題
+        if (targetId === "query_equipment" || targetId === "edit_equipment") {
+            $('#queryModalTitle').text(doc.getTextByKey("機台"));
+        } else {
+            $('#queryModalTitle').text(doc.getTextByKey("儲位"));
+        }
+
+       // queryParamsB = null;
+    }
+
+    //事件:儲位選擇視窗開啟
+    function onStorageModalShow() {
+        $('#btnChoose').text(globalDoc.getTextByKey('ok'));
+        tableInitB();
+        $('#dgB').datagrid('loadData', { "total": 0, "rows": [] });
+        $('#btnChoose').attr('disabled', true);
+    }
+
+
+    //tableInitB()機台儲位開啟選擇表
+    function tableInitB(e) {
+        let targetId = choosetargetId;
+        switch (targetId) {
+            case "query_storage":
+                dataurl = '../api/ApiAgvStorage/GetDataListStorage';
+                break;
+            case "edit_storage":
+                dataurl = '../api/ApiAgvStorage/GetDataListStorage';
+                break;
+            //case "edit_storage": //Limit找沒配對過的儲位
+            //    dataurl = '../api/ApiAgvStorage/GetDataListStorageLimit';
+            //    break;
+            case "query_equipment":
+                dataurl = '../api/ApiAgvStorage/GetDataList';
+                break;
+            case "edit_equipment":
+                dataurl = '../api/ApiAgvStorage/GetDataListLimit';
+                break;
+        }
+
+        $('#dgB').datagrid({
+            url: dataurl,
+            method: 'POST',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            height: 350,
+            sortName: 'ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'ID', title: doc.getTextByKey('ID'), width: '50%', sortable: true },
+                { field: 'NAME', title: doc.getTextByKey('NAME'), width: '50%', sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                $('#btnChoose').attr('disabled', false);
+                if (choosetargetId === "edit_equipment") {
+                    equipmentGUID = field.GUID;
+                    equipmentNAME = field.NAME;
+                    $('#edit_equipment_input').val(field.NAME);
+                }
+                if (choosetargetId === "query_equipment") {
+                    equipmentGUID = field.GUID;
+                    $('#query_equipment_input').val(field.NAME);
+                }
+                if (choosetargetId === "edit_storage") {
+                    storageGUID = field.GUID;
+                    storageNAME = field.NAME;
+                    $('#edit_storage_input').val(field.NAME);
+                }
+                if (choosetargetId === "query_storage") {
+                    storageGUID = field.GUID;
+                    $('#query_storage_input').val(field.NAME);
+                }
+            }, onBeforeLoad: function (param) {
+                if (queryParamsB === null) {
+                    return true; //無參數時不查詢
+                } else {
+                    param.total = queryParamsB.total;
+                }
+            }, onLoadSuccess: function (rows) {
+                $('#btnQueryChoose').attr('disabled', false);
+                $('#btnChoose').attr('disabled', true);
+                guidB = null;
+            }
+        });
+        //資料換頁工具列文字顯示
+        var p = $('#dgB').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+    }
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShowB(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiAgvStorage/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let data, actionUrl, guid;
+        let addEquipmentNAME = $('#edit_equipment_input').val();
+        let addStorage;
+        let edit_equipment = $('#edit_equipment').val();
+        let edit_storage = $('#edit_storage').val();
+        let edit_remark = $('#edit_remark').val();
+        $('#modal_edit').modal('hide');
+        $('#btnAccept').attr('disabled', false);
+        data = $('#formEdit').serializeObject();
+        data.EQUIPMENT_GUID = equipmentGUID;
+        data.STORAGE_GUID = storageGUID;
+        //用輸入的話，先到資料庫找有無此筆資料
+        if (action === "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+            //data.EQUIPMENT_NAME = equipmentNAME;
+            //data.STORAGE_NAME = storageNAME;
+
+        } else {
+            data.EQUIPMENT_NAME = equipmentNAME;
+            data.GUID = selectedGUID;
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiAgvStorage/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiAgvStorage/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiAgvStorage/Delete";
+                break;
+        }
+
+        //未輸入資料跳出錯誤訊息
+        if (action === 'add' || action === 'edit') {
+            if (data.EQUIPMENT_GUID === '' && data.EQUIPMENT_NAME === '') {
+                toastr.error(
+                    globalDoc.getTextByKey('error'),
+                    globalDoc.getTextByKey('未輸入機台新增資料')
+                );
+                return;//未輸入
+            }
+            if (data.STORAGE_GUID === '' && data.STORAGE_NAME === '') {
+                toastr.error(
+                    globalDoc.getTextByKey('error'),
+                    globalDoc.getTextByKey('未輸入儲位新增資料')
+                );
+                return;//未輸入
+            }
+        }
+        //取得目前頁面
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                if (response.result == false) {
+                    toastr.error(
+                        globalDoc.getTextByKey('error'),
+                        globalDoc.getTextByKey(`${response.msg}`)
+                    );
+                } else {
+                    toastr.success(
+                        globalDoc.getTextByKey('succeed'),
+                        globalDoc.getTextByKey('prompt')
+                    );
+                }
+                
+                guid = response.guid;
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+                if (action == "add") {
+                    if (response.repeat == "true") {
+                        $('#dg').datagrid('insertRow', {
+                            //index: 15, // 索引從 0
+                            row: {
+                                GUID: guid,
+                                EQUIPMENT_NAME: edit_equipment,
+                                STORAGE_NAME: edit_storage,
+                                REMARK: edit_remark
+                            }
+                        });
+                    }
+
+                } else {
+                    Query(currentPage);
+                }
+                //執行完btn鎖定??
+                //$('.ajaxRequest').attr('disabled', false);
+                equipmentGUID = '';
+                equipmentNAME = '';
+                storageGUID = '';
+                storageNAME = '';
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+                //最後都會執行的函式
+                equipmentGUID = '';
+                equipmentNAME = '';
+                storageGUID = '';
+                storageNAME = '';
+                Query(currentPage);
+            }
+        });
+        
+
+
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    //按enter鍵搜尋
+    $(document).on('keypress', function (e) {
+        if (e.which == 13) {
+            Query(1)
+        }
+    });
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+        });
+    });
+</script>

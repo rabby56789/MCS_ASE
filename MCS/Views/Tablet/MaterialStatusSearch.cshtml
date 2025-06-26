@@ -1,0 +1,394 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="tablet" /> <!--頁面功能名稱,每頁必加-->
+    <div class="bread-crumb" id="breadcrumb">
+        <span data-lngkey="pad"></span>
+        <span> > </span>
+        <a href="/Tablet"><span data-lngkey="pad_frontpage"></span></a>
+        <span> > </span>
+        <span data-lngkey="material_status_search"></span>
+    </div>
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#material_status_search" aria-expanded="true" aria-controls="material_status_search">
+            <span data-lngKey="material_status_search" class="caret"></span>
+        </div>
+        <div id="material_status_search" class="collapse show search-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--floating-labels使用必加div外框與class屬性-->
+                    <div class="form-label-group in-border must-input">
+                        <input id="material_id" type="text" class="form-control" />
+                        <!--label必須放在input之後,否則文字會在輸入框內-->
+                        <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                        <label data-lngKey="material_id" class="font-weight-bold" for="material_id"></label>
+                    </div>
+                </div>
+
+
+                <div class="col-md align-self-end align-items-end form-group">
+                    <a href="#" id="btnQuery" class="easyui-linkbutton button log" plain="true" data-lngKey="search"><i class="fas fa-search fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_materialInfo" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnClosemodal_materialInfo" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_edit">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <!--floating-labels使用必加div外框與class屬性-->
+                                <div class="form-label-group in-border must-input">
+                                    <input id="bind_material_id" type="text" class="form-control" readonly="readonly"/>
+                                    <!--label必須放在input之後,否則文字會在輸入框內-->
+                                    <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                                    <label for="bind_material_id" data-lngKey="material_id" ></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="bind_trolly_id" type="text" class="form-control" readonly="readonly" />
+                                    <label for="bind_trolly_id" data-lngKey="bind_trolly_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="bind_trolly_location_id" type="text" class="form-control" readonly="readonly" />
+                                    <label for="bind_trolly_location_id" data-lngKey="bind_trolly_location_id"></label>
+                                </div>
+                            </div>
+                            @*<div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="trolly_status" type="text" class="form-control" value="XXXXXX" readonly="readonly" />
+                                    <label for="trolly_status" data-lngKey="trolly_status"></label>
+                                </div>
+                            </div>*@
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="confirm">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--畫面動作-->
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let queryParams;
+    let doc;
+
+    //頁面元件初始化
+    function PageInit() {
+        //停用輸入欄位的自動完成
+        let inputs = document.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_materialInfo').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        setNotNull();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', Query);
+
+        $('.btn-confirm').on('click', Confirm);
+
+        $('#modal_materialInfo').on('show.bs.modal', onEditModalShow);
+
+        $(window).on("resize", resizeLayout);
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#queryConditionPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+        $('#edit_factory').addClass('required');
+        $('#edit_phase').addClass('required');
+        $('#edit_depart').addClass('required');
+    }
+
+    //查詢
+    function Query() {
+        action = 'query';
+
+        queryParams = {
+            MATERIAL_ID: $('#material_id').val()
+        };
+
+        $.post(
+            "../api/MaterialInfo/Query",
+            queryParams,
+            function (response) {
+                /*debugger;*/
+
+                //console.log(data);
+                //console.log(data[0].MATERIALLOT);
+
+                if (response == "no_data") {
+                    toastr.error(
+                        doc.getTextByKey('maintain_not_bind_any_trolley'),
+                        globalDoc.getTextByKey('error')
+                    );
+                } else {
+                    let data = JSON.parse(response);
+
+                    //填入查詢結果(待立維補完)
+                    $('#bind_material_id').val(data[0].MATERIALLOT);
+                    $('#bind_trolly_id').val(data[0].TROLLEY_ID);
+                    $('#bind_trolly_location_id').val(data[0].LOCATION_ID);
+                    $('#modal_materialInfo').modal('show');
+
+                }
+            });
+    }
+
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "query":
+                formTitle.innerText = globalDoc.getTextByKey("material_status_search");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiUser/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let actionUrl, data;
+
+        $('#modal_materialInfo').modal('hide');
+
+        data = {
+            ID: $('#edit_id').val(),
+            PASSWORD: $('#edit_password').val(),
+            REMARK: $('#edit_remark').val()
+        };
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+        } else {
+            data.GUID = selectedGUID
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiUser/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiUser/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiUser/Delete";
+                break;
+        }
+
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+
+                Query();
+
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'query':
+                        LoadData(queryParams);
+                        break;
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+    //#region 下拉選單方法群
+
+    //刷新下拉選單項目(參數:目標select元件ID,資料來源URL,傳送參數) [是否移至共用區?]
+    function refreshDorpDownListItems(targetSelectElementId, dataSourceUrl, parameters) {
+        let elm = $('#' + targetSelectElementId);
+        let optionElm = document.createElement("option");
+        optionElm.setAttribute("value", "");
+
+        //setElmLanguage(optionElm, "plzChoice");
+
+        //移除並加入預設選項
+        elm.find('option').remove().end();
+        elm.append(optionElm);
+
+        //沒輸入資料來源Url直接結束
+        if (typeof (dataSourceUrl) == undefined) {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: dataSourceUrl,
+            data: parameters,
+            dataType: "json",
+            success: function (data) {
+                data.rows.forEach(function (item) {
+                    elm.append(`<option value="${item.Key}">${item.Value}</option>`);
+                });
+
+                elm.prop('selectedIndex', 0);
+            }
+        });
+    }
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+
+        });
+    });
+</script>

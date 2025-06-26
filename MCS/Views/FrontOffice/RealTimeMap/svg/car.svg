@@ -1,0 +1,64 @@
+        <svg id="carSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400.14 430.05">
+          <defs>
+            <style>
+              .a {
+                fill: #ed6a1e;
+              }
+
+              .b {
+                fill: #f09a18;
+              }
+
+              .c {
+                fill: #ea5326;
+              }
+
+              .d {
+                fill: #040000;
+                stroke: #040000;
+                stroke-width: 9.07px;
+                opacity: 0.75;
+              }
+
+              .d,
+              .g {
+                stroke-miterlimit: 10;
+              }
+
+              .d,
+              .f {
+                isolation: isolate;
+              }
+
+              .e {
+                fill: #aca7a5;
+              }
+
+              .f {
+                font-size: 84.92px;
+                fill: #231815;
+                font-family: ArialUnicodeMS, Arial Unicode MS;
+              }
+
+              .g {
+                fill: none;
+                stroke: #91cde2;
+                stroke-width: 10.88px;
+              }
+            </style>
+          </defs>
+          <title>icon 2d</title>
+          <g id="car1">
+            <rect class="a" x="35.19" y="17.29" width="344.25" height="392.02" rx="109.67" />
+            <path class="b"
+              d="M262.7,17.18l-12.38,1.34c47.93,0,86.79,36.86,86.79,82.32V259.63c0,45.47-38.86,82.31-86.79,82.31l24.45-7.79c47.93,0,105.72-31,105.72-76.49l-4.24-152.49C376.23,59.72,310.63,17.18,262.7,17.18Z" />
+            <path class="c"
+              d="M357.9,328.79v-182c0-50.24-36.56-87.67-85.62-87.67H136.84c-49.09,0-99.74,36-99.74,86.22l1,170.45c5.55,42,45.9,89,99.21,96.56h0L277.11,415C315.19,409.31,357.9,379,357.9,328.79Z" />
+            <path class="a"
+              d="M362.83,275.5V135.24c0-48.23-47.16-118.06-97.16-118.06H132.45c-50,0-97.32,68-97.25,89.11L32.07,273.73c0,48.23,45.56,86.54,95.56,86.54h138C315.67,360.27,362.83,323.73,362.83,275.5Z" />
+            <path class="d" d="M122.08,22.57h168.4v43s0,14.69-24.1,14.69H138.92s-16.46-1.05-16.84-13.64V22.57" />
+            <rect class="e cl20" x="124.08" y="201.12" width="164.39" height="151.05" />
+            <text class="f svg-text" transform="translate(177.92 179.89) scale(1.14 1)">1</text>
+            <rect class="g" x="32.07" y="14.5" width="348.39" height="401.04" rx="122.73" />
+          </g>
+        </svg>

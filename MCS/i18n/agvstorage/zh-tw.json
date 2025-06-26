@@ -1,0 +1,22 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "equipment": "機台",
+  "storage": "儲位",
+  "equipmentId": "機台代碼",
+  "storageId": "儲位代碼",
+  "equipmentName": "機台名稱",
+  "storageName": "儲位名稱",
+  "query_storage": "儲位彈跳窗",
+  "query_equipment": "機台彈跳窗",
+  "ID": "代碼",
+  "NAME": "名稱",
+  "remark": "說明"
+}

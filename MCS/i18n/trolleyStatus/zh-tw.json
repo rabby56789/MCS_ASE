@@ -1,0 +1,14 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "顯示貨架資訊",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "car_no": "貨架名稱",
+  "area_name": "區域名稱",
+  "storage_name": "儲位名稱",
+  "qr_code": "QRCode",
+  "confirm": "確定",
+  "y": "確認",
+  "n": "取消"
+}

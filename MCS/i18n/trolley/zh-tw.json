@@ -1,0 +1,16 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "ok": "確定",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "id": "貨架代碼",
+  "name": "貨架名稱",
+  "type": "TYPE",
+  "remark": "說明"
+}

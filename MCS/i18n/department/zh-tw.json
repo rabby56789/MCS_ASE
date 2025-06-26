@@ -1,0 +1,14 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "id": "部門代碼",
+  "name": "部門名稱",
+  "remark": "說明"
+}

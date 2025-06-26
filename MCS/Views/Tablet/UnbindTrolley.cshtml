@@ -1,0 +1,284 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="tablet" /> <!--頁面功能名稱,每頁必加-->
+    <div class="bread-crumb" id="breadcrumb">
+        <span data-lngkey="pad"></span>
+        <span> > </span>
+        <a href="/Tablet"><span data-lngkey="pad_frontpage"></span></a>
+        <span> > </span>
+        <span data-lngkey="unbindTrolley"></span>
+    </div>
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#unbindTrolley" aria-expanded="true" aria-controls="unbindTrolley">
+            <span data-lngKey="unbindTrolley" class="caret"></span>
+        </div>
+        <div id="unbindTrolley" class="collapse show search-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <!--floating-labels使用必加div外框與class屬性-->
+                    <div class="form-label-group in-border must-input">
+                        <input id="trolleyId" type="text" class="form-control" />
+                        <!--label必須放在input之後,否則文字會在輸入框內-->
+                        <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                        <label data-lngKey="trolley_id" class="font-weight-bold" for="trolleyId"></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!--floating-labels使用必加div外框與class屬性-->
+                    <div class="form-label-group in-border must-input">
+                        <input id="position_code" type="text" class="form-control" />
+                        <!--label必須放在input之後,否則文字會在輸入框內-->
+                        <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                        <label data-lngKey="position_code" class="font-weight-bold" for="position_code"></label>
+                    </div>
+                </div>
+
+
+                <div class="col-md align-self-end align-items-end form-group">
+                    <button data-lngKey="ok" type="button" id="btnExecute" class="button float-right log"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    @*<div class="tableParent">
+            <div id="toolbar">
+                <a href="#" id="btnAdd" class="easyui-linkbutton log" plain="true" data-lngKey="add"><i class="fas fa-file-medical fa-lg"></i></a>
+                <a href="#" id="btnEdit" class="easyui-linkbutton log" plain="true" data-lngKey="edit"><i class="fas fa-file-signature fa-lg"></i></a>
+                <a href="#" id="btnDelete" class="easyui-linkbutton log" plain="true" data-lngKey="delete"><i class="fas fa-trash-alt fa-lg"></i></a>
+                <a href="#" id="btnExportOnGrid" class="easyui-linkbutton log" plain="true" data-lngKey="exportExcel"><i class="fas fa-file-export fa-lg"></i></a>
+            </div>
+            <table id="dg"></table>
+        </div>*@
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_edit">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <!--floating-labels使用必加div外框與class屬性-->
+                                <div class="form-label-group in-border must-input">
+                                    <input id="newtask_id" type="text" class="form-control" />
+                                    <!--label必須放在input之後,否則文字會在輸入框內-->
+                                    <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                                    <label data-lngKey="task_id" for="newtask_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <select id="task_status" class="form-control">
+                                        <option value="" disabled selected>任務狀態</option>
+                                        <option value="complete">完成</option>
+                                        <option value="pause">暫停</option>
+                                        <option value="execute">執行中</option>
+                                        <option value="wait">待執行</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="newtrolleyId" type="text" class="form-control" />
+                                    <label for="newtrolleyId" data-lngKey="trolley_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="newstart" type="text" class="form-control" />
+                                    <label for="newstart" data-lngKey="start"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="newend" type="text" class="form-control" />
+                                    <label for="newend" data-lngKey="end"></label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="confirm">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--畫面動作-->
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let queryParams;
+    let doc;
+
+    //頁面元件初始化
+    function PageInit() {
+        //停用輸入欄位的自動完成
+        let inputs = document.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        setNotNull();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnExecute').on('click', execute);
+        $('.btn-confirm').on('click', confirm);
+
+        $(window).on("resize", resizeLayout);
+
+        //設定通用事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#queryConditionPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+        $('#edit_factory').addClass('required');
+        $('#edit_phase').addClass('required');
+        $('#edit_depart').addClass('required');
+    }
+
+    //執行解綁
+    function execute(e) {
+
+        let parm = {
+            reqCode: uuid(),
+            reqTime: "",
+            clientCode: "",
+            tokenCode: "",
+            podCode: $("#trolleyId").val(),
+            positionCode: $("#position_code").val(),
+            podDir: "",
+            indBind: "0"
+        };
+
+        $('#btnAccept').attr('disabled', true);
+
+        $.ajax({
+            type: "POST",
+            url: "api/UnbindTrolley/Execute",
+            data: parm,
+            dataType: "json",
+            success: function (response) {
+
+                if (response.result == "ok") {
+                    toastr.success(
+                        globalDoc.getTextByKey('succeed'),
+                        doc.getTextByKey('unbind_trolley_ok')
+                    );
+                } else {
+                    toastr.error(
+                        globalDoc.getTextByKey('error'),
+                        doc.getTextByKey('unbind_trolley_failed')
+                    );
+                }
+            },
+            error: function (response) {
+
+            },
+            complete: function (response) {
+                $('#btnAccept').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function confirm(btnVal) {
+        switch (btnVal) {
+            case 'ok':
+                switch (action) {
+                    case 'query':
+                        LoadData(queryParams);
+                        break;
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    //隨機生成唯一碼
+    function uuid() {
+        var d = Date.now();
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            d += performance.now(); //use high-precision timer if available
+        }
+        return 'xxxx-xx-4xxx-yxx-xxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+
+        });
+    });
+</script>

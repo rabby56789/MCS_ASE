@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任務看板</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/fontawesome-free-5.15.3-web-all.min.js"></script>    
+</head>
+
+<body>
+
+    <!--<div>
+        <div class="digits-chart-flex">
+         DIGITS 
+        <div class="missionlist-digits">
+         TITLE 
+        <ul class="missionlist-title">
+                <li class="left-img"></li>
+                <li>
+                    <p class="missionlist-title-text">TASK STATUS</p>
+                </li>
+                <li class="right-img"></li>
+            </ul>
+
+            <ul class="digits-flex">
+
+                <li class="digits-card">
+                    <div class="digits-item">
+                        <div class="icon">
+                            <span class="far fa-check-circle icon-fz"></span>
+                        </div>
+                        <div>
+                            <p class="digit-text">完成</p>
+                            <p id="num_taskComplete" class="digit-num">10</p>
+                        </div>
+                    </div>
+                    <div class="digits-line"></div>
+                    <div class="digits-update">
+                        <span class="fas fa-arrow-alt-circle-up" style="color: #8adfdf;"></span>
+                        <p style="display: inline; padding-left: 1%;"><span class="second">0</span> 秒前更新</p>
+                    </div>
+                </li>
+
+                <li class="digits-card">
+                    <div class="digits-item">
+                        <div class="icon">
+                            <span class="far fa-times-circle icon-fz"></span>
+                        </div>
+                        <div>
+                            <p class="digit-text">異常</p>
+                            <p id="num_taskError" class="digit-num">2</p>
+                        </div>
+                    </div>
+                    <div class="digits-line"></div>
+                    <div class="digits-update">
+                        <span class="fas fa-arrow-alt-circle-up" style="color: #8adfdf;"></span>
+                        <p style="display: inline; padding-left: 1%;"><span class="second">0</span> 秒前更新</p>
+                    </div>
+                </li>
+
+                <li class="digits-card">
+                    <div class="digits-item">
+                        <div class="icon">
+                            <span class="far fa-pause-circle icon-fz"></span>
+                        </div>
+                        <div>
+                            <p class="digit-text">未執行</p>
+                            <p id="num_taskWait" class="digit-num">88</p>
+                        </div>
+                    </div>
+                    <div class="digits-line"></div>
+                    <div class="digits-update">
+                        <span class="fas fa-arrow-alt-circle-up" style="color: #8adfdf;"></span>
+                        <p style="display: inline; padding-left: 1%;"><span class="second">0</span> 秒前更新</p>
+                    </div>
+                </li>
+
+            </ul>
+
+        </div>
+         PIE CHART 
+        <div class="missionlist-piechart">
+         TITLE 
+        <ul class="missionlist-title">
+                    <li class="left-img"></li>
+                    <li>
+                        <p class="missionlist-title-text">PERCENTAGE</p>
+                    </li>
+                    <li class="right-img"></li>
+                </ul>
+
+                <ul class="missionlist-doughnut">
+
+                    <li class="doughnut-chart">
+                        <svg width="140" height="140" id="doughnut-chart1" xmlns="http://www.w3.org/2000/svg">
+                        </svg>
+                        <p class="doughnut-percent-title">
+                            任務成功率
+                        </p>
+                    </li>
+                    <li class="doughnut-chart">
+                        <svg width="140" height="140" id="doughnut-chart2" xmlns="http://www.w3.org/2000/svg">
+                        </svg>
+                        <p class="doughnut-percent-title">
+                            任務執行率
+                        </p>
+                    </li>
+                    <li class="doughnut-chart">
+                        <svg width="140" height="140" id="doughnut-chart3" xmlns="http://www.w3.org/2000/svg">
+                        </svg>
+                        <p class="doughnut-percent-title">
+                            AGV稼動率
+                        </p>
+                    </li>
+
+                </ul>
+
+                <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="SvgjsLinearGradient1000" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop stop-color="#75b2c1" offset="0"></stop>
+                            <stop stop-color="#103f94" offset="1"></stop>
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+            </div>
+
+        </div>
+    </div>-->
+
+
+
+    <div class="button-shet">
+        <button class="test" id="all" onclick="SetJobStatus(this.id)">全部</button>
+        <button class="test" id="execution" onclick="SetJobStatus(this.id)">運送中</button>
+        <button class="test" id="complete" onclick="SetJobStatus(this.id)">已送達</button>
+        <button class="test" id="temp" onclick="SetJobStatus(this.id)">暫存</button>
+    </div>
+
+    <!-- SHEET -->
+    <div class="missionlist-sheet">
+
+        <!-- TITLE -->
+        <ul class="missionlist-title">
+            <li class="left-img"></li>
+            <li>
+                <p class="missionlist-title-text">TASK LIST</p>
+            </li>
+            <li class="right-img"></li>
+        </ul>
+        <!--<div class="sheet-table">
+            <button class="test">運送中</button>
+            <button class="test">已送達</button>
+            <button class="test">暫存</button>
+        </div>-->
+        <div id="pageModule">
+        </div>
+        <div id="numberPageModule">
+            <label for="numberPage">跳至第</label>
+            <input id="numberPage" type="number" value="1" min="1" max="100">頁
+        </div>
+        <div class="sheet-table">
+            <table id="table_task" class="table-hover">
+                <thead>
+                    <tr id="table_head">
+                        <th data-key="ASE_SEQ">任務單號</th>
+                        <th data-key="ASE_JOB_NAME">任務說明</th>
+                        <th data-key="JOB_STATUS">狀態燈號</th>
+                        <th data-key="ASE_START_LOC">Start Location</th>
+                        <th data-key="ASE_TARGET_LOC">End Location</th>
+                        <th data-key="AGVCODE">AGV編號</th>
+                        <th data-key="ASE_CAR_NO">貨架編號</th>
+                        <th data-key="WEIGHTING">優先級</th>
+                        <th data-key="STATUS">任務狀態</th>
+                        <th data-key="SUBTASK_NAME">狀態說明</th>
+                        <th data-key="START_TIME">起始時間</th>
+                        <th data-key="WAIT_TIME">等待時間</th>
+                    </tr>
+                </thead>
+                <tbody id="table">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- SHEET -->
+    <script>
+        let refreshTime;
+        let h = 0;
+        let m = 0;
+        let s = 0;
+        let countTaskWait = 0;
+        let countTaskComplete = 0;
+        let countTaskError = 0;
+        let refreshFrequency = 5; //資料更新頻率
+        let IntervalTask; //定時器
+        let secend = 0; //累計更新秒數
+        let planTimeOffset = 120; //預計派車時間抓取範圍(分)
+        let td_font_size = '1em';
+        let td_line_height = '36px';
+        let td_col_width = '100px';
+        let action = ""
+        //let current_page = 1;//目前觀看頁數
+
+        //取得搜尋狀態
+        function SetJobStatus(clickID) {
+            action = clickID;
+            GetTaskData();
+        }
+
+        ////取得設定參數
+        //let getParameters = new Promise((resolve) => {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "../api/Global/GetParamsByFunction",
+        //        data: { FUNCTION: "TaskBoard" },
+        //        dataType: "json",
+        //        success: (parms) => {
+        //            for (let idx = 0; idx < parms.length; idx++) {
+        //                switch (parms[idx].FILTER_KEY) {
+        //                    case "PlanTimeOffset":
+        //                        planTimeOffset = parseInt(parms[idx].VALUE, 10);
+        //                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //            }
+        //            resolve(parms);
+        //        },
+        //        error: () => {
+
+        //        }
+        //    });
+        //});
+
+        //取得設定參數
+        let getParameters = new Promise((resolve) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiTaskPlan/GetParamsByFunction",
+                dataType: "json",
+                success: (parms) => {
+                    resolve(parms);
+                    if (parms["Hour"]) { h = parseInt(parms["Hour"], 10); }
+                    if (parms["Minute"]) { m = parseInt(parms["Minute"], 10); }
+                    if (parms["Second"]) { s = parseInt(parms["Second"], 10); }
+                    refreshTime = (h * 3600 + m * 60 + s) * 1000;
+                    console.log(refreshTime);
+                    //console.log(parms["Minute"]);
+                },
+                error: () => {
+
+                }
+            });
+        });
+
+        //取得任務資料
+        function GetTaskData() {
+            let PLAN_TIME = new Date();//當天時間
+            //PLAN_TIME.setMinutes(PLAN_TIME.getMinutes() - planTimeOffset);
+            //PLAN_TIME.setMonth(11);//測試用
+            //PLAN_TIME.setDate(20);//測試用
+            //從當日的00:00:00計算每日任務數量
+            PLAN_TIME.setHours(0);
+            PLAN_TIME.setMinutes(0);
+            PLAN_TIME.setSeconds(00);
+            console.log(PLAN_TIME);
+            let job_status = '';            
+            if (action == 'execution') {
+                job_status = 1;
+            }
+            else if (action == 'complete') {
+                job_status = 2;
+            }
+            else if (action == 'temp') {
+                job_status = 3;
+            }
+            else {
+                job_status = '';
+            }
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiTaskPlan/Query",
+                data: {
+                    "PLAN_TIME": convertTimeToCSharp(PLAN_TIME),
+                    "JOB_STATUS": job_status
+                    //"sort": "PLAN_TIME",//指定依任務發送時間排序
+                    //"order": "desc", //最新任務排最上方
+                    //"page": 1,
+                    //"rows": 25
+                },
+                dataType: "json",
+                success: function (response) {
+                    RefreshTaskList(response.rows);
+                    //StatisticalTasks(response.rows);
+                    //PercentageClear();
+                    //ShowPercentage(PercentageCalculator());
+                },
+                complete: () => {
+                    IntervalTask = setInterval(refreshData, refreshTime);
+                    //IntervalTask = setInterval(refreshData, 120000);
+                    //IntervalTask = setInterval(refreshData, 1000);
+                }
+            });
+        }
+
+        //轉為C#可接受時間格式
+        function convertTimeToCSharp(date) {
+            let day = date.getDate();       // yields date
+            let month = date.getMonth() + 1;    // yields month (add one as '.getMonth()' is zero indexed)
+            let year = date.getFullYear();  // yields year
+            let hour = date.getHours();     // yields hours
+            let minute = date.getMinutes(); // yields minutes
+            let second = date.getSeconds(); // yields seconds
+
+            // After this construct a string with the above results as below
+            return year + "-" + month + "-" + day + " " + hour + ':' + minute + ':' + second;
+        }
+
+        //更新任務清單
+        function RefreshTaskList(taskList) {
+
+            let t = document.getElementById('table');
+            let head = document.getElementById('table_head').querySelectorAll('th');
+            t.innerHTML = "";
+
+            taskList.forEach((task) => {
+               // console.log(task);
+                let tr = document.createElement("tr");
+                
+                head.forEach((th) => {
+                    for (let key in task) {
+                        if (th.dataset.key == key) {
+                            let td = document.createElement("td");
+                            td.style.fontSize = td_font_size;
+                            td.style.lineHeight = td_line_height;
+                            td.classList.add(th.dataset.key);
+
+                            //任務狀態特別顯示
+                            if (key == "JOB_STATUS") {
+                                td.appendChild(ConvertTaskStatus(task[key], task["WAIT_TIME"]));
+                            } else if (key == "PLAN_TIME") {
+                                td.innerText = task[key].replace('T', ' ');
+                            }
+                            else {
+                                td.innerText = task[key];
+                            }
+
+                            tr.appendChild(td);
+                        }
+                    }
+                });
+
+                t.appendChild(tr);
+            });
+            goPage(1, 20);
+        }
+
+        //分頁功能
+        function goPage(currentPage, pageSize) {
+            //current_page = current_page;
+            var tr = $("#table_task tbody tr");
+            var num = $("#table_task tbody tr").length; //表格所有行數(所有記錄數)
+            var totalPage = Math.ceil(num / pageSize); // 表格所有行數/每頁顯示行數 = 總頁數
+
+            $('#numberPage').attr('max', totalPage); // 寫入跳至第幾頁input
+
+            $("#numberPage").off('change').on("change", function () {// 跳至第幾頁
+                let numberPage = $("#numberPage").val();
+                if (numberPage > totalPage) {
+                    console.log("頁數超過")
+                    return
+                }
+                goPage(numberPage, 20);
+            });
+
+            var startRow = (currentPage - 1) * pageSize + 1; //開始顯示的行
+            var endRow = currentPage * pageSize; //結束顯示的行
+            endRow = (endRow > num) ? num : endRow;
+
+
+            //遍歷顯示資料實現分頁
+            for (var i = 1; i < (num + 1); i++) {
+                var trRow = tr[i - 1];
+                if (i >= startRow && i <= endRow) {
+                    trRow.style.display = "";
+                } else {
+                    trRow.style.display = "none";
+                }
+            }
+
+            var tempStr = "";
+            if (currentPage > 1) {
+                tempStr += `<a href="javascript:;" onClick="goPage(1,${pageSize})">首頁</a>`;
+                tempStr += `<a href="javascript:;" onClick="goPage(${currentPage - 1},${pageSize})">上一頁</a>`;
+
+            } else {
+                tempStr += `<a href="javascript:;" class="disabled">首頁</a>`;
+                tempStr += `<a href="javascript:;" class="disabled">上一頁</a>`;
+            }
+
+            tempStr += `<div><span>第${currentPage}頁</span>/<span>共${totalPage}頁</span></div>`;
+
+            if (currentPage < totalPage) {
+                tempStr += `<a href="javascript:;" onClick="goPage(${currentPage + 1},${pageSize})">下一頁</a>`;
+                tempStr += `<a href="javascript:;" onClick="goPage(${totalPage},${pageSize})">尾頁</a>`;
+            } else {
+                tempStr += `<a href="javascript:;" class="disabled">下一頁</a>`;
+                tempStr += `<a href="javascript:;" class="disabled">尾頁</a>`;
+            }
+
+            $("#pageModule").html(tempStr);
+        }
+
+
+        //轉換任務執行狀態效果
+        function ConvertTaskStatus(status, wait_time) {
+            let div = document.createElement("div");
+            //超過15分鐘燈號轉成紅色
+            if (wait_time > 900 && status == 1) {
+                status = 5;
+            }
+            switch (status) {
+                case 0:
+                    div.classList.add('execution');
+                    div.innerText = "建立中";
+                    break;
+                case 1:
+                    div.classList.add('execution');
+                    div.innerText = "運送中";
+                    break;
+                case 2:
+                    div.classList.add('complete');
+                    div.innerText = "已送達";
+                    break;
+                case 3:
+                    div.classList.add('timeout');
+                    div.innerText = "失敗";
+                    break;
+                case 4:
+                    div.classList.add('cancel');
+                    div.innerText = "取消";
+                    break;
+                case 5:
+                    div.classList.add('timeout');
+                    div.innerText = "運送中";
+                    break;
+            }
+
+            return div;
+        }
+
+        //任務統計
+        //function StatisticalTasks(taskList) {
+        //    countTaskWait = 0;
+        //    countTaskComplete = 0;
+        //    countTaskError = 0;
+
+        //    taskList.forEach((task) => {
+        //        switch (task.PLAN_STATUS) {
+        //            case 0:
+        //                countTaskWait += 1;
+        //                break;
+        //            case 2:
+        //                countTaskComplete += 1;
+        //                break;
+        //            case 9:
+        //                countTaskError += 1;
+        //                break;
+        //            default:
+        //        }
+        //    });
+
+        //    document.getElementById('num_taskComplete').innerText = countTaskComplete;
+        //    document.getElementById('num_taskError').innerText = countTaskError;
+        //    document.getElementById('num_taskWait').innerText = countTaskWait;
+        //}
+
+        ////百分比清除
+        //function PercentageClear() {
+        //    let elm1 = document.getElementById('doughnut-chart1');
+        //    let elm2 = document.getElementById('doughnut-chart2');
+        //    let elm3 = document.getElementById('doughnut-chart3');
+
+        //    elm1.innerHTML = "";
+        //    elm2.innerHTML = "";
+        //    elm3.innerHTML = "";
+        //}
+
+        ////百分比計算
+        //function PercentageCalculator() {
+        //    let result = {};
+        //    result.successRate = countTaskComplete / (countTaskComplete + countTaskError);
+        //    result.exacutiveRate = (countTaskComplete + countTaskError) / (countTaskComplete + countTaskError + countTaskWait);
+        //    result.utilizationRate = 33.3;
+
+        //    if (result.successRate.toString() == "NaN") { result.successRate = 0; }
+        //    if (result.exacutiveRate.toString() == "NaN") { result.exacutiveRate = 0; }
+
+        //    result.successRate = (result.successRate * 100).toFixed(1);
+        //    result.exacutiveRate = (result.exacutiveRate * 100).toFixed(1);
+
+        //    return result;
+        //}
+
+        ////百分比顯示
+        //function ShowPercentage(originalData) {
+        //    // 完成度
+        //    var percent1 = originalData.successRate;
+        //    var percent2 = originalData.exacutiveRate;
+        //    var percent3 = originalData.utilizationRate;
+
+        //    // 完成度換算之角度
+        //    var degree1 = 360 * percent1 / 100 - 90;
+        //    var degree2 = 360 * percent2 / 100 - 90;
+        //    var degree3 = 360 * percent3 / 100 - 90;
+        //    //100%會消失(頭尾相同)
+        //    if (percent1 == 100)
+        //        degree1 = 360 * 99 / 100 - 90;
+        //    if (percent2 == 100)
+        //        degree2 = 360 * 99 / 100 - 90;
+        //    if (percent3 == 100)
+        //        degree3 = 360 * 99 / 100 - 90;
+        //    // 終點位置
+        //    var x1 = 70 + 60 * Math.cos((degree1 * Math.PI) / 180);
+        //    var y1 = 70 + 60 * Math.sin((degree1 * Math.PI) / 180);
+        //    var x2 = 70 + 60 * Math.cos((degree2 * Math.PI) / 180);
+        //    var y2 = 70 + 60 * Math.sin((degree2 * Math.PI) / 180);
+        //    var x3 = 70 + 60 * Math.cos((degree3 * Math.PI) / 180);
+        //    var y3 = 70 + 60 * Math.sin((degree3 * Math.PI) / 180);
+        //    //最大or最小弧度
+        //    var rad1 = 0, rad2 = 0, rad3 = 0;
+        //    if (percent1 >= 50)
+        //        rad1 = 1;
+        //    if (percent2 >= 50)
+        //        rad2 = 1;
+        //    if (percent3 >= 50)
+        //        rad3 = 1;
+        //    //設定path參數值
+        //    var pd1 = 'M70 10 A60 60 0 ' + rad1 + ' 1 ' + x1 + ' ' + y1;
+        //    var pd2 = 'M70 10 A60 60 0 ' + rad2 + ' 1 ' + x2 + ' ' + y2;
+        //    var pd3 = 'M70 10 A60 60 0 ' + rad3 + ' 1 ' + x3 + ' ' + y3;
+
+        //    //設定文字
+        //    var text_position1 = 44; text_position2 = 44; var text_position3 = 44;
+        //    function isFloat(n) {
+        //        return n === n && n !== (n | 0);
+        //    }
+        //    if (percent1 == 100)
+        //        text_position1 = 37;
+        //    if (percent1 == 0)
+        //        text_position1 = 52;
+        //    if (isFloat(percent1))
+        //        text_position1 = 32;
+        //    if (percent2 == 100)
+        //        text_position2 = 37;
+        //    if (percent2 == 0)
+        //        text_position2 = 52;
+        //    if (isFloat(percent2))
+        //        text_position2 = 32;
+        //    if (percent3 == 100)
+        //        text_position3 = 37;
+        //    if (percent3 == 0)
+        //        text_position3 = 52;
+        //    if (isFloat(percent3))
+        //        text_position3 = 32;
+
+        //    var text1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        //    text1.setAttribute('x', text_position1); text1.setAttribute('y', '100');
+        //    text1.setAttribute('fill', '#fff'); text1.setAttribute('font-size', '30');
+        //    text1.textContent = percent1 + '%';
+
+        //    var text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        //    text2.setAttribute('x', text_position2); text2.setAttribute('y', '100');
+        //    text2.setAttribute('fill', '#fff'); text2.setAttribute('font-size', '30');
+        //    text2.textContent = percent2 + '%';
+
+        //    var text3 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        //    text3.setAttribute('x', text_position3); text3.setAttribute('y', '100');
+        //    text3.setAttribute('fill', '#fff'); text3.setAttribute('font-size', '30');
+        //    text3.textContent = percent3 + '%';
+
+        //    var circle1 = makeSVG('circle', { cx: 70, cy: 70, r: 60, stroke: '#142636', 'stroke-width': 15, fill: 'none' });
+        //    var circle2 = makeSVG('circle', { cx: 70, cy: 70, r: 60, stroke: '#142636', 'stroke-width': 15, fill: 'none' });
+        //    var circle3 = makeSVG('circle', { cx: 70, cy: 70, r: 60, stroke: '#142636', 'stroke-width': 15, fill: 'none' });
+        //    var path1 = makeSVG('path', { d: pd1, fill: 'none', 'stroke-linejoin': 'round', 'stroke-linecap': 'square', 'stroke-opacity': '0.8', 'stroke-width': '15', stroke: 'url(#SvgjsLinearGradient1000)' });
+        //    var path2 = makeSVG('path', { d: pd2, fill: 'none', 'stroke-linejoin': 'round', 'stroke-linecap': 'square', 'stroke-opacity': '0.8', 'stroke-width': '15', stroke: 'url(#SvgjsLinearGradient1000)' });
+        //    var path3 = makeSVG('path', { d: pd3, fill: 'none', 'stroke-linejoin': 'round', 'stroke-linecap': 'square', 'stroke-opacity': '0.8', 'stroke-width': '15', stroke: 'url(#SvgjsLinearGradient1000)' });
+        //    document.getElementById('doughnut-chart1').appendChild(circle1);
+        //    document.getElementById('doughnut-chart1').appendChild(path1);
+        //    document.getElementById('doughnut-chart1').appendChild(text1);
+        //    document.getElementById('doughnut-chart2').appendChild(circle2);
+        //    document.getElementById('doughnut-chart2').appendChild(path2);
+        //    document.getElementById('doughnut-chart2').appendChild(text2);
+        //    document.getElementById('doughnut-chart3').appendChild(circle3);
+        //    document.getElementById('doughnut-chart3').appendChild(path3);
+        //    document.getElementById('doughnut-chart3').appendChild(text3);
+        //}
+
+        //重複執行
+        function refreshData() {
+            let elms = document.getElementsByClassName("second");
+            secend = secend + 1;
+
+            //時間到時刷新畫面資料
+            if (secend > refreshFrequency) {
+                secend = 0;
+                clearInterval(IntervalTask);
+                GetTaskData();
+            }
+
+            //更新畫面秒數
+            for (let i = 0; i < elms.length; i++) {
+                elms[i].innerText = secend;
+            }
+        }
+
+        //SVG Tag Maker
+        //function makeSVG(tag, attrs) {
+        //    var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        //    for (var k in attrs)
+        //        el.setAttribute(k, attrs[k]);
+        //    return el;
+        //}
+
+        ////依照設定參數動態更改
+        //function dynamicLayout() {
+        //    let left = '65%', right = '35%';
+        //    $('.missionlist-digits').css('width', left);
+        //    $('.missionlist-piechart').css('width', right);
+
+        //    // Table Font
+        //    let font_family = 'TaipeiSansTCBeta, Arial, serif';
+        //    let th_font_size = '1em';
+
+        //    $('tr').css('font-family', font_family);
+        //    $('tr > th').css('font-size', th_font_size);
+        //}
+
+        $(function () {
+            getParameters.then((data) => {
+                //dynamicLayout();
+                GetTaskData();
+            });
+        });
+    </script>
+</body>
+
+</html>

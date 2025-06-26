@@ -1,0 +1,35 @@
+﻿{
+    "function": "功能代碼",
+    "filter_key": "篩選條件",
+    "text": "顯示值",
+    "value": "儲存值",
+    "type": "參數類型",
+    "remark": "備註",
+
+    "searchCondition": "查詢條件",
+    "functionSelect": "代號選擇",
+    "function_alert": "功能代碼彈跳視窗",
+
+    "search": "查詢",
+    "add": "新增",
+    "edit": "編輯",
+    "delete": "刪除",
+    "exportExcel": "匯出excel",
+
+    "plzChoice": "請選擇",
+    "confirm": "確定",
+    "delMsg": "是否確認刪除?",
+    "y": "是",
+    "n": "否",
+    "prompt": "提示",
+    "succeed": "操作成功",
+    "ok": "確定",
+    "cancel": "取消",
+    "over1000": "查詢結果超過1000筆資料，\n 是否繼續？",
+    "expXls": "直接匯出Excel",
+    "error": "錯誤",
+
+    "beforePageText": "第",
+    "afterPageText": "頁  共 {pages} 頁",
+    "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆"
+}

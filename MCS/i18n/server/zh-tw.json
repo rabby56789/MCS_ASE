@@ -1,0 +1,19 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "ip": "IP",
+  "name": "名稱",
+  "url": "位址",
+  "port": "PORT",
+  "function": "服務名稱",
+  "agvserver": "AGV服務",
+  "server_type": "類型",
+  "remark": "說明"
+}

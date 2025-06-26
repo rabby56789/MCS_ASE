@@ -1,0 +1,12 @@
+{
+  "dashboard": "首頁看板",
+  "AGVs": "AGV數量",
+  "Tasks": "今日任務總數",
+  "Completed": "今日任務完成數",
+  "Alarms": "警報數量",
+  "chartTitle_WebsiteViewCount": "網站訪問人數",
+  "chartTitle_AverageTaskTime": "平均任務時間",
+  "chartTitle_CompleteTaskCount": "完成任務數量",
+  "updateFrequencyJustUpdated": "即時更新",
+  "updateFrequencyOneDay": "一天前更新"
+}

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGV狀態</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/fontawesome-free-5.15.3-web-all.min.js"></script>    
+</head>
+
+<body>
+
+    <!--<div class="button-shet">
+        <button class="test" id="all" onclick="SetJobStatus(this.id)">全部</button>
+        <button class="test" id="execution" onclick="SetJobStatus(this.id)">運送中</button>
+        <button class="test" id="complete" onclick="SetJobStatus(this.id)">已送達</button>
+        <button class="test" id="temp" onclick="SetJobStatus(this.id)">暫存</button>
+    </div>-->
+
+    <!-- SHEET -->
+    <div class="missionlist-sheet">
+
+        <!-- TITLE -->
+        <ul class="missionlist-title">
+            <li class="left-img"></li>
+            <li>
+                <p class="missionlist-title-text">AGV STATUS</p>
+            </li>
+            <li class="right-img"></li>
+        </ul>
+        
+        <!--<div id="pageModule">
+        </div>
+        <div id="numberPageModule">
+            <label for="numberPage">跳至第</label>
+            <input id="numberPage" type="number" value="1" min="1" max="100">頁
+        </div>-->
+        <div class="sheet-table">
+            <table id="table_task" class="table-hover">
+                <thead>
+                    <tr id="table_head">
+                        <th data-key="ROBOTCODE">AGV編號</th>
+                        <th data-key="BATTERY">電量</th>
+                        <th data-key="ASE_START_LOC">起始儲位</th>
+                        <th data-key="ASE_TARGET_LOC">目的儲位</th>
+                        <th data-key="TASKCODE">任務單號</th>
+                        <th data-key="ASE_JOB_NAME">任務名稱</th>
+                        <th data-key="AGV_STATUS">狀態</th>
+                        <th data-key="MAPCODE">Map Code</th>
+                    </tr>
+                </thead>
+                <tbody id="table">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- SHEET -->
+    <script>
+        let refreshTime;
+        let h = 0;
+        let m = 0;
+        let s = 0;
+        let countTaskWait = 0;
+        let countTaskComplete = 0;
+        let countTaskError = 0;
+        let refreshFrequency = 5; //資料更新頻率
+        let IntervalTask; //定時器
+        let secend = 0; //累計更新秒數
+        let planTimeOffset = 120; //預計派車時間抓取範圍(分)
+        let td_font_size = '1em';
+        let td_line_height = '36px';
+        let td_col_width = '100px';
+        let action = ""
+        //let current_page = 1;//目前觀看頁數          
+
+        //取得設定參數
+        let getParameters = new Promise((resolve) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/AGVStatus/GetParamsByFunction",
+                dataType: "json",
+                success: (parms) => {
+                    resolve(parms);
+                    if (parms["Hour"]) { h = parseInt(parms["Hour"], 10); }
+                    if (parms["Minute"]) { m = parseInt(parms["Minute"], 10); }
+                    if (parms["Second"]) { s = parseInt(parms["Second"], 10); }
+                    refreshTime = (h * 3600 + m * 60 + s) * 1000;
+                    console.log(refreshTime);
+                    //console.log(parms["Minute"]);
+                },
+                error: () => {
+
+                }
+            });
+        });
+
+
+
+        //取得AGVStatus資料
+        function GetTaskData() {            
+            $.ajax({
+                type: "POST",
+                url: "../api/AGVStatus/ReadAGVStatus",               
+                dataType: "json",
+                success: function (response) {
+                    RefreshTaskList(response.rows);                    
+                },
+                complete: () => {
+                    IntervalTask = setInterval(refreshData, refreshTime);
+                    //IntervalTask = setInterval(refreshData, 120000);
+                    //IntervalTask = setInterval(refreshData, 1000);
+                }
+            });
+        }
+
+        //轉為C#可接受時間格式
+        function convertTimeToCSharp(date) {
+            let day = date.getDate();       // yields date
+            let month = date.getMonth() + 1;    // yields month (add one as '.getMonth()' is zero indexed)
+            let year = date.getFullYear();  // yields year
+            let hour = date.getHours();     // yields hours
+            let minute = date.getMinutes(); // yields minutes
+            let second = date.getSeconds(); // yields seconds
+
+            // After this construct a string with the above results as below
+            return year + "-" + month + "-" + day + " " + hour + ':' + minute + ':' + second;
+        }
+
+        //更新任務清單
+        function RefreshTaskList(taskList) {
+            let t = document.getElementById('table');
+            let head = document.getElementById('table_head').querySelectorAll('th');
+            t.innerHTML = "";
+
+            taskList.forEach((task) => {
+                console.log(task);
+                let tr = document.createElement("tr");
+
+                head.forEach((th) => {
+                    for (let key in task) {
+                        if (th.dataset.key == key) {
+                            let td = document.createElement("td");
+                            td.style.fontSize = td_font_size;
+                            td.style.lineHeight = td_line_height;
+                            td.classList.add(th.dataset.key);
+
+                            //AGV狀態特別顯示
+                            if (key == "AGV_STATUS") {
+                                //td.appendChild(ConvertAGVStatus(task[key], task["WAIT_TIME"]));
+                                td.innerText = ConvertAGVStatus(task[key]);
+                            }
+                            else {
+                                td.innerText = task[key];
+                            }
+
+                            tr.appendChild(td);
+                        }
+                    }
+                });
+
+                t.appendChild(tr);
+            });
+            //goPage(1, 10);
+        }
+
+        //分頁功能
+        function goPage(currentPage, pageSize) {
+            //current_page = current_page;
+            var tr = $("#table_task tbody tr");
+            var num = $("#table_task tbody tr").length; //表格所有行數(所有記錄數)
+            var totalPage = Math.ceil(num / pageSize); // 表格所有行數/每頁顯示行數 = 總頁數
+
+            $('#numberPage').attr('max', totalPage); // 寫入跳至第幾頁input
+
+            $("#numberPage").off('change').on("change", function () {// 跳至第幾頁
+                let numberPage = $("#numberPage").val();
+                if (numberPage > totalPage) {
+                    console.log("頁數超過")
+                    return
+                }
+                goPage(numberPage, 10);
+            });
+
+            var startRow = (currentPage - 1) * pageSize + 1; //開始顯示的行
+            var endRow = currentPage * pageSize; //結束顯示的行
+            endRow = (endRow > num) ? num : endRow;
+
+
+            //遍歷顯示資料實現分頁
+            for (var i = 1; i < (num + 1); i++) {
+                var trRow = tr[i - 1];
+                if (i >= startRow && i <= endRow) {
+                    trRow.style.display = "";
+                } else {
+                    trRow.style.display = "none";
+                }
+            }
+
+            var tempStr = "";
+            if (currentPage > 1) {
+                tempStr += `<a href="javascript:;" onClick="goPage(1,${pageSize})">首頁</a>`;
+                tempStr += `<a href="javascript:;" onClick="goPage(${currentPage - 1},${pageSize})">上一頁</a>`;
+
+            } else {
+                tempStr += `<a href="javascript:;" class="disabled">首頁</a>`;
+                tempStr += `<a href="javascript:;" class="disabled">上一頁</a>`;
+            }
+
+            tempStr += `<div><span>第${currentPage}頁</span>/<span>共${totalPage}頁</span></div>`;
+
+            if (currentPage < totalPage) {
+                tempStr += `<a href="javascript:;" onClick="goPage(${currentPage + 1},${pageSize})">下一頁</a>`;
+                tempStr += `<a href="javascript:;" onClick="goPage(${totalPage},${pageSize})">尾頁</a>`;
+            } else {
+                tempStr += `<a href="javascript:;" class="disabled">下一頁</a>`;
+                tempStr += `<a href="javascript:;" class="disabled">尾頁</a>`;
+            }
+
+            $("#pageModule").html(tempStr);
+        }
+
+
+        //轉換AGV狀態效果
+        function ConvertAGVStatus(status) {
+
+            //AGV_STATUS 狀態碼
+            var agv_status_code = {
+                '1': '任務完成',
+                '2': '任務執行中',
+                '3': '任務異常',
+                '4': '任務空閒',
+                '5': '機器人暫停',
+                '6': '舉升貨架狀態',
+                '7': '充电状态',
+                '8': '弧线行走中 ',
+                '9': '充满维护',
+                '11': '背貨未識別',
+                '12': '貨架偏角過大',
+                '13': '运动库异常 ',
+                '14': '貨碼無法識別',
+                '15': '貨碼不匹配',
+                '16': '舉升異常',
+                '17': '充電樁異常',
+                '18': '電量無增加',
+                '20': '充电指令角度错误',
+                '21': '平台下发指令错误',
+                '23': '外力下放',
+                '24': '貨架位置偏移',
+                '25': '小車不在鎖定區',
+                '26': '下放重試失敗',
+                '27': '貨架擺歪',
+                '28': '舉升電池電量太低',
+                '29': '後退角度偏大',
+                '30': '未背貨架舉升',
+                '31': '區域鎖定失敗',
+                '33': '旋轉申請暫時失敗',
+                '34': '地圖切換點地碼未識別',
+                '81': '前方有障礙物',
+                '246': '待機模式',
+            }
+            var agv_status_text = "";
+            if (!agv_status_code[status]) {
+                agv_status_text = "STATUS CODE : " + status;                
+            }
+            else {
+                agv_status_text = agv_status_code[status];
+            }
+            return agv_status_text;
+        }
+
+        //重複執行
+        function refreshData() {
+            let elms = document.getElementsByClassName("second");
+            secend = secend + 1;
+
+            //時間到時刷新畫面資料
+            if (secend > refreshFrequency) {
+                secend = 0;
+                clearInterval(IntervalTask);
+                GetTaskData();
+            }
+
+            //更新畫面秒數
+            for (let i = 0; i < elms.length; i++) {
+                elms[i].innerText = secend;
+            }
+        }
+
+        $(function () {
+            GetTaskData();
+            //getParameters.then((data) => {
+            //    //dynamicLayout();
+                
+            //});
+        });
+    </script>
+</body>
+
+</html>

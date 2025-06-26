@@ -1,0 +1,447 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.svg-text{
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+
+.main{
+	min-height: 100vh;
+}
+
+.map-container{
+	background-color: black;
+	min-height: 100vh;
+	width:100%;
+}
+
+.map-container .map-top, .map-container .map, .map-container .map-bottom{
+	width:100%;
+}
+
+.map-container .map-top{
+	background-color:#000031;
+	height:30px;
+}
+
+.map-container .map-bottom{
+	background-color:cornsilk;
+	height:0;
+}
+
+.map-container .map{
+	height: calc( 100vh - 30px );
+	overflow: auto;
+	background-color:#000031;
+}
+
+.map-top > h1{
+	color:#b2ffff;
+	margin-top:5px;
+	padding-left:10px;
+	line-height: 30px;
+}
+.map-now{
+	color:#b2ffff;
+	padding-right:10px;
+	line-height: 30px;
+	white-space:nowrap;
+}
+
+.map-top > img {
+	margin-top: -15px;
+	height: 300%;
+}
+
+#svg-map{
+	margin:0 auto;
+	display: block;
+}
+
+/* side-menu */
+.side-container .mission-list, .side-container .MR-status{
+	width:550px;
+	position:fixed;
+	right:-542px ;
+	margin-bottom:8px;
+	transition: 200ms linear;	
+}
+
+.side-container .mission-list.active, .side-container .MR-status.active{
+	height: calc( 50vh - 30px );
+	right:15px;
+	transition: 200ms linear;
+	background-color: #4A5865;
+	opacity:0.7;
+}
+
+.side-container .mission-list{
+	top:35px;
+}
+
+.mission-list>.side-title{
+	height:160px;
+	/* padding-right:5px; */
+	background: linear-gradient(270deg, #00f7eb,#00a9fe);
+	background: -webkit-linear-gradient(270deg,#00f7eb,#00a9fe);
+	background: -o-linear-gradient(270deg,#00f7eb,#00a9fe);
+	background: -moz-linear-gradient(270deg,#00f7eb,#00a9fe);	
+}
+
+.MR-status>.side-title{
+	font-family:'Trebuchet MS';
+	height:160px;
+	line-height: 1.2em;
+	background: linear-gradient(270deg, #00f7eb,#00a9fe);
+	background: -webkit-linear-gradient(270deg,#00f7eb,#00a9fe);
+	background: -o-linear-gradient(270deg,#00f7eb,#00a9fe);
+	background: -moz-linear-gradient(270deg,#00f7eb,#00a9fe);	
+}
+.side-title{
+	padding-top:0.1rem;
+	width:1.5rem;
+	position:relative;
+	word-break: break-all;
+	color:rgb(0, 0, 0);
+	left:-1.5rem;
+	/* background:radial-gradient(circle farthest-corner at bottom,#00a9fe,#00f7eb); */
+	opacity:0.9;
+	text-align: center;
+	padding-bottom: 0.8rem;
+	cursor:pointer;
+
+	border-left:rgb(0, 255, 255,0.6) 2px solid;
+	border-top:rgb(0, 255, 255,0.6) 2px solid;
+	border-bottom:rgb(0, 255, 255,0.6) 2px solid;
+
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+	z-index: 20;
+}
+
+.mission-list>.side-title::before{
+	content:"";
+	position:absolute;
+	height:0;
+	width:0;
+	top:134px;
+	left:-25px;
+    border-color:  transparent #00a9fe transparent transparent ;
+    border-style: solid solid solid solid;
+    border-width: 1.45rem;
+}
+
+.MR-status>.side-title::before{
+	content:"";
+	position:absolute;
+	height:0;
+	width:0;
+	top:134px;
+	left:-25px;
+    border-color:  transparent #00a9fe transparent transparent ;
+    border-style: solid solid solid solid;
+    border-width: 1.45rem;
+}
+
+/* .side-title.active{
+	height: calc( 50vh - 30px );
+} */
+
+.side-title>hr{
+	background-color:#11ff0080;
+	width:50%;
+	height:5px;
+}
+
+.side-container .MR-status{
+	top:230px;
+	height:150px;
+}
+
+
+
+.side-container .MR-status.down{
+	top:calc( 50vh + 15px );
+	transition: 200ms linear;
+}
+
+.DashBoard, .mission{
+	width:100%;
+}
+
+/*MR-DashBoard*/
+.DashBoard{
+	overflow-y: auto;
+	padding-top:10px;
+}
+
+.MR-DashBoard{
+	height:33.3%;
+	width:100%;
+}
+
+/*Mission*/
+.mission-info{
+	height:60%;
+}
+.mission-rate{
+	width:40%;
+	height:100%;
+}
+
+.today-mission{
+	width:60%;
+	height:100%;
+}
+
+.today-mission>.mission-button{
+	height:30%;
+	width:90%;
+
+	position: relative;
+	margin:6px auto;
+	padding-left:8px;
+	font-size: 18px;
+	vertical-align: top;
+	border: 2px solid #b2ffff;
+}
+
+.today-mission>.mission-button::after,.today-mission>.mission-button::before{
+	content: "";
+	position: absolute;
+	background-color: #4A5865;
+	z-index: 0;
+	transition: 200ms ease-in;
+	transform-origin: center center;
+	opacity:0.8
+}
+
+.mission-button::before {
+	width: calc(100% + 2px * 2 - 10px);
+	height: calc(100% + 2px * 2);
+	top: -2px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.mission-button::after {
+	height: calc(100% + 2px * 2 - 10px);
+	width: calc(100% + 2px * 2);
+	left: -2px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+.mission-button:hover::before {
+	width: 0;
+}
+.mission-button:hover::after {
+	height: 0;
+}
+
+.mission-button h4 {
+	position: relative;
+	display: inline-block;
+	color: #979c9c;
+	text-transform: uppercase;
+	text-decoration: none;
+	line-height: 1em;
+	font-size: 0.7em;
+	padding: 5px 20px;
+	margin: 0 2px;
+	z-index: 1;
+}
+
+.today-mission>.mission-button>h4{
+	line-height:60px;
+	color:#b2ffff;
+	font-size: 20px;
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.MR-missiontime, .MR-missiontime::before, .MR-missiontime::after {
+	position: absolute;
+	bottom: 0;
+	left: 20px;
+	right: 0;
+}
+
+.MR-missiontime{
+	top: 60%;
+	width:500px;
+	height: 100px;	
+	border: groove 4px #b2ffff;
+	border-style: groove;
+	margin:auto;
+	overflow-x: auto;
+}
+
+.mis-DashBoard:last-child{
+	border:none;
+}
+
+
+
+.mis-DashBoard{
+	width:33.3333%;
+	color:#b2ffff;
+	font-size:1rem;
+	border-right:#b2ffff 2px outset;
+	border-style: dashed;
+
+}
+
+.mis-DashBoard h4{
+	padding-left: 5%;
+	padding-top: 2%;
+	font: small;
+}
+
+.mis-DashBoard p{
+	display: inline-block;
+	/* margin-top:5%; */
+	margin-left:5%;
+	font-size:2.5rem;
+}
+
+
+
+/* zoom botton */
+#small, #large{
+	-webkit-appearance: none;  /* Safari 和 Chrome，常用於iOS下移除內建樣式 */
+    -moz-appearance: none;     /* FireFox */
+    appearance: none;
+	
+	height:25px;
+	width:25px;
+	min-width: 25px;
+	max-width: 25px;
+	min-height: 25px;
+	max-height: 25px;
+	padding:0;
+
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -khtml-border-radius: 50%;
+	border:#00a9fe 2px solid;
+	background-color: #00f7eb;
+	position:relative;
+	line-height: 20px;
+	top:-100px;
+	left: 10px;
+	margin-top: 10px;
+	cursor: pointer;
+	font-size: 18px;
+	font-weight: 400;
+}
+
+
+#small:focus, #large:focus{
+	outline: 0;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height:10px;
+}
+::-webkit-scrollbar-track {
+    background: #8b8b8b;
+	border-radius: 25px;
+}
+  
+  /* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 58, 58, 0.527);
+    border-radius: 25px;
+}
+  /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color:rgba(59, 58, 58);
+}
+::-webkit-scrollbar-corner {
+	/*
+	background-image: url(resources/corner.png);
+	background-repeat: no-repeat;
+	*/
+	background-color: rgba(59, 58, 58, 0.527);
+	}
+
+
+	

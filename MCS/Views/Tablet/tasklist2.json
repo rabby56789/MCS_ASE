@@ -1,0 +1,22 @@
+﻿{
+	"order": "asc",
+	"page": "1",
+	"sort": "TASK_ID",
+	"total": "1",
+	"rows": [
+		{
+			"TASK_ID": "task20210225123311",
+			"STATUS": "執行中",
+			"AGV_ID": "96",
+			"STARTINGPOINT": "11,20",
+			"ENDINGPOINT": "19,19"
+		},
+		{
+			"TASK_ID": "task20210225123521",
+			"STATUS": "暫停",
+			"AGV_ID": "125",
+			"STARTINGPOINT": "6,8",
+			"ENDINGPOINT": "22,23"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "exportExcel": "匯出excel",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆",
+  "id": "樓層代碼",
+  "name": "樓層名稱",
+  "floorId": "樓層代碼",
+  "floorName": "樓層名稱",
+  "factoryId": "廠代碼",
+  "factoryName": "廠名稱",
+  "factory": "廠",
+  "remark": "說明"
+}

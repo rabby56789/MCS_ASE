@@ -1,0 +1,488 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/index.css" rel="stylesheet" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="index" /> <!--頁面功能名稱,每頁必加-->
+    <div class="bread-crumb" id="breadcrumb" style="margin-bottom: 20px;">
+        <span data-lngKey="dashboard"></span>
+    </div>
+
+    <ul class="row flex-wrap dashboard-mb">
+        <!--AGV count-->
+        <li class="col-lg-3 col-md-6 dashboard-padding-reset" style="margin-top: 20px;">
+            <div class="card dashboard-card" style="height: 150px; align-items:center;">
+                <div class="d-flex justify-content-between dashboard-fix-cardtop" style="width: 90%;">
+                    <div class="d-flex justify-content-center align-items-center dashboard-shadow" style="width: 75px;height: 75px;background-color:#11b1ce; border-radius:5px;">
+                        <span class="fas fa-dolly-flatbed" style="font-size:30px;color:#fff;"></span>
+                    </div>
+                    <div>
+                        <p class="dashboard-card-title" data-lngKey="AGVs"></p>
+                        <p class="dashboard-card-number">
+                            <span id="spanAgvOnlineCount">2</span>
+                            /
+                            <span id="spanAgvTotalCount">5</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyJustUpdated"></p>
+                </div>
+            </div>
+        </li>
+        <!--today total task -->
+        <li class="col-lg-3 col-md-6 dashboard-padding-reset" style="margin-top: 20px;">
+            <div class="card dashboard-card" style="height: 150px; align-items:center;">
+                <div class="d-flex justify-content-between dashboard-fix-cardtop" style="width: 90%;">
+                    <div class="d-flex justify-content-center align-items-center dashboard-shadow" style="width: 75px; height: 75px; background-color: #e01f63; border-radius: 5px;">
+                        <span class="fas fa-tasks" style="font-size:30px;color:#fff;"></span>
+                    </div>
+                    <div>
+                        <p class="dashboard-card-title" data-lngKey="Tasks"></p>
+                        <p class="dashboard-card-number"><span id="spanTaskCount">75.521</span></p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyJustUpdated"></p>
+                </div>
+            </div>
+        </li>
+        <!--today total complete task -->
+        <li class="col-lg-3 col-md-6 dashboard-padding-reset" style="margin-top: 20px;">
+            <div class="card dashboard-card" style="height: 150px; align-items:center;">
+                <div class="d-flex justify-content-between dashboard-fix-cardtop" style="width: 90%;">
+                    <div class="d-flex justify-content-center align-items-center dashboard-shadow" style="width: 75px; height: 75px; background-color: #46a64b; border-radius: 5px;">
+                        <span class="fas fa-clipboard-check" style="font-size:30px;color:#fff;"></span>
+                    </div>
+                    <div>
+                        <p class="dashboard-card-title" data-lngKey="Completed"></p>
+                        <p class="dashboard-card-number"><span id="spanTodayCompletedTasks">34,245</span></p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyJustUpdated"></p>
+                </div>
+            </div>
+        </li>
+        <!--today total alarm -->
+        <li class="col-lg-3 col-md-6 dashboard-padding-reset" style="margin-top: 20px;">
+            <div class="card dashboard-card" style="height: 150px; align-items:center;">
+                <div class="d-flex justify-content-between dashboard-fix-cardtop" style="width: 90%;">
+                    <div class="d-flex justify-content-center align-items-center dashboard-shadow" style="width: 75px; height: 75px; background-color: #ff9003; border-radius: 5px;">
+                        <span class="fas fa-comment-dots" style="font-size:30px;color:#fff;"></span>
+                    </div>
+                    <div>
+                        <p class="dashboard-card-title" data-lngKey="Alarms"></p>
+                        <p class="dashboard-card-number"><span id="spanTodayAlarmCount">184</span></p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyJustUpdated"></p>
+                </div>
+            </div>
+        </li>
+
+    </ul>
+
+    <ul class="row">
+        <!--網站瀏覽人次-->
+        <li class="col-lg-4 col-md-6 col-sm-6 dashboard-chart-mb dashboard-padding-reset">
+            <div class="card dashboard-chart-card">
+                <div class="dashboard-fix-charttop dashboard-shadow" style="background-color: #e01f63;">
+                    <canvas id="chartWebsiteViewCount"></canvas>
+                </div>
+
+                <h3 class="dashboard-chart-content" data-lngKey="chartTitle_WebsiteViewCount"></h3>
+                <div class="dashboard-chart-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyOneDay" ></p>
+                </div>
+            </div>
+        </li>
+        <!--平均任務時間-->
+        <li class="col-lg-4 col-md-6 col-sm-6 dashboard-chart-mb dashboard-padding-reset">
+            <div class="card dashboard-chart-card">
+                <div class="dashboard-fix-charttop dashboard-shadow" style="background-color: #59b25d;">
+                    <canvas id="chartAverageTaskTime"></canvas>
+                </div>
+
+                <h3 class="dashboard-chart-content" data-lngKey="chartTitle_AverageTaskTime"></h3>
+                <div class="dashboard-chart-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyOneDay" ></p>
+                </div>
+            </div>
+        </li>
+        <!--完成任務數量統計-->
+        <li class="col-lg-4 col-md-6 col-sm-6 dashboard-chart-mb dashboard-padding-reset">
+            <div class="card dashboard-chart-card">
+                <div class="dashboard-fix-charttop dashboard-shadow" style="background-color: #0bb5ca;">
+                    <canvas id="chartCompleteTaskCount"></canvas>
+                </div>
+
+                <h3 class="dashboard-chart-content" data-lngKey="chartTitle_CompleteTaskCount"></h3>
+                <div class="dashboard-chart-line"></div>
+
+                <div class="align-self-start mt-2 ml-4 dashboard-card-footnote">
+                    <span class="fas fa-history"></span>
+                    <p style="display: inline;" data-lngKey="updateFrequencyOneDay"></p>
+                </div>
+            </div>
+        </li>
+
+    </ul>
+
+</div>
+
+<script src="~/Scripts/chart.min.js"></script>
+
+<script>
+    //顯示AGV數量
+    function showAGVcount() {
+        $('#spanAgvOnlineCount').text("0");
+        $('#spanAgvTotalCount').text("0");
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetOnLineAgvCount",
+            data: {},
+            dataType: "json",
+            success: function (response) {
+                if (response.hasOwnProperty('count')) {
+                    $('#spanAgvOnlineCount').text(response.count);
+                }
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetDefinedAgvCount",
+            data: {
+                "ID": ""
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.hasOwnProperty('count')) {
+                    $('#spanAgvTotalCount').text(response.count);
+                }
+            }
+        });
+    }
+
+    //顯示今日總任務數
+    function showTaskOfToday() {
+        $('#spanTaskCount').text("0");
+
+        let start = new Date();
+        start.setHours(0, 0, 0, 0);
+
+        let end = new Date();
+        end.setHours(23, 59, 59, 999);
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetTodayTaskCount",
+            data: {
+                "INSERT_TIME_START": moment(start).format("YYYY-MM-DD HH:mm:ss"),
+                "INSERT_TIME_END": moment(end).format("YYYY-MM-DD HH:mm:ss")
+            },
+            dataType: "json",
+            success: function (response) {
+                $('#spanTaskCount').text(response.count);
+            }
+        });
+    }
+
+    //顯示今日完成任務數
+    function showCompletedTaskOfToday() {
+        $('#spanTodayCompletedTasks').text("0");
+
+        let start = new Date();
+        start.setHours(0, 0, 0, 0);
+
+        let end = new Date();
+        end.setHours(23, 59, 59, 999);
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetTodayCompleteTaskCount",
+            data: {
+                "JOB_STATUS": 2,
+                "INSERT_TIME_START": moment(start).format("YYYY-MM-DD HH:mm:ss"),
+                "INSERT_TIME_END": moment(end).format("YYYY-MM-DD HH:mm:ss")
+            },
+            dataType: "json",
+            success: function (response) {
+                $('#spanTodayCompletedTasks').text(response.count);
+            }
+        });
+    }
+
+    //顯示今日警報數量
+    function showAlarmCountOnToday() {
+        $('#spanTodayAlarmCount').text("0");
+
+        let start = new Date();
+        start.setHours(0, 0, 0, 0);
+
+        let end = new Date();
+        end.setHours(23, 59, 59, 999);
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetTodayAlarmCount",
+            data: {
+                "INSERT_TIME_START": moment(start).format("YYYY-MM-DD HH:mm:ss"),
+                "INSERT_TIME_END": moment(end).format("YYYY-MM-DD HH:mm:ss")
+            },
+            dataType: "json",
+            success: function (response) {
+                $('#spanTodayAlarmCount').text(response.count);
+            }
+        });
+    }
+
+    //網站瀏覽人數
+    function showWebsiteViewsCount() {
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetChartData",
+            data: {
+                "type": "WebsiteViewCount"
+            },
+            dataType: "json",
+            success: function (response) {
+                let ctx = document.getElementById('chartWebsiteViewCount');
+                let aryLabels = [];
+                let aryData = [];
+                console.log(response);
+                response.data.forEach((item) => {
+                    let originDate = item.INSERT_TIME.toString();
+                    let date = originDate.split("T")[0];
+                    let day = date.split("-")[2];
+
+                    aryLabels.push(day);
+                    aryData.push(item.VALUE);
+                });
+
+                let chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: aryLabels,
+                        datasets: [{
+                            data: aryData,
+                            backgroundColor: [
+                                '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1', '#f7d6e1',
+                            ],
+                        }],
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                        },
+                        barPercentage: 0.6,
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    color: '#fad3e1'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    borderDash: [1, 3],
+                                    color: '#fad3e1'
+                                },
+                                ticks: {
+                                    color: '#fad3e1'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //平均任務時間
+    function showAverageTaskTime() {
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetChartData",
+            data: {
+                "type": "AverageTaskTime"
+            },
+            dataType: "json",
+            success: function (response) {
+                let ctx = document.getElementById('chartAverageTaskTime');
+                let aryLabels = [];
+                let aryData = [];
+                console.log(response);
+                response.data.forEach((item) => {
+                    let originDate = item.INSERT_TIME.toString();
+                    let date = originDate.split("T")[0];
+                    let day = date.split("-")[2];
+
+                    aryLabels.push(day);
+                    aryData.push(item.VALUE);
+                });
+
+                let chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: aryLabels,
+                        datasets: [{
+                            data: aryData,
+                            borderColor: '#fff',
+                        }],
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    borderDash: [1, 3],
+                                    color: '#fff'
+                                },
+                                ticks: {
+                                    color: '#fff'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    borderDash: [1, 3],
+                                    color: '#fff'
+                                },
+                                ticks: {
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //每日完成任務數量
+    function showCompletedTaskCount() {
+
+        $.ajax({
+            type: "POST",
+            url: "api/Index/GetChartData",
+            data: {
+                "type": "CompleteTaskCount"
+            },
+            dataType: "json",
+            success: function (response) {
+                let ctx = document.getElementById('chartCompleteTaskCount');
+                let aryLabels = [];
+                let aryData = [];
+                console.log(response);
+                response.data.forEach((item) => {
+                    let originDate = item.INSERT_TIME.toString();
+                    let date = originDate.split("T")[0];
+                    let day = date.split("-")[2];
+
+                    aryLabels.push(day);
+                    aryData.push(item.VALUE);
+                });
+
+                let chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: aryLabels,
+                        datasets: [{
+                            data: aryData,
+                            borderColor: '#fff',
+                        }],
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    borderDash: [1, 3],
+                                    color: '#fff'
+                                },
+                                ticks: {
+                                    color: '#fff'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    borderDash: [1, 3],
+                                    color: '#fff'
+                                },
+                                ticks: {
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    }
+
+                });
+            }
+        });
+    }
+
+
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'));
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            showAGVcount();
+            showTaskOfToday();
+            showCompletedTaskOfToday();
+            showAlarmCountOnToday();
+            showWebsiteViewsCount();
+            showAverageTaskTime();
+            showCompletedTaskCount();
+        });
+    });
+</script>

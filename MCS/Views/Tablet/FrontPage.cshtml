@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-msgInfo.css" rel="stylesheet" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="Tablet" /> <!--頁面功能名稱,每頁必加-->
+    <!--任務選單-->
+    <div class="search-form mb-4">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#taskmenu" aria-expanded="true" aria-controls="taskmenu">
+            <span data-lngKey="taskmenu" class="caret"></span>
+        </div>
+        <div class="collapse show main-screen-box" id="taskmenu">
+            <div style="margin-top: 40px !important;"></div>
+            <ul class="d-flex align-items-center flex-wrap" style="width:98%; height: 100%; margin: 0 auto;">
+                <li>
+                    <a href="Tablet?id=TaskList" class="btn tablet-but border-img d-block text-color">任務<br>清單</a>
+                </li>
+                <li>
+                    <a href="Tablet?id=TaskBuild" class="btn tablet-but border-img d-block text-color">建立<br>任務</a>
+                </li>
+                <li>
+                    <a href="Tablet?id=TaskCookies" class="btn tablet-but border-img d-block text-color">歷史<br>任務</a>
+                </li>
+                @*<li>
+                        <a href="Tablet?id=Testchart" class="btn tablet-but border-img d-block text-color">Chart<br>測試</a>
+                    </li>*@
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!--物料狀態 維護/查詢-->
+    @*<div class="search-form mb-4">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#materialmenu" aria-expanded="true" aria-controls="materialmenu">
+            <span data-lngKey="materialmenu" class="caret"></span>
+        </div>
+        <div class="collapse show main-screen-box" id="materialmenu">
+            <div style="margin-top: 40px !important;"></div>
+            <ul class="d-flex align-items-center flex-wrap" style="width:98%; height: 100%; margin: 0 auto;">
+                <li>
+                    <a href="Tablet?id=MaterialBind" class="btn tablet-but border-img d-block text-color">物料<br>綁定</a>
+                </li>
+                <li>
+                    <a href="Tablet?id=MaterialStatusSearch" class="btn tablet-but border-img d-block text-color">狀態<br>查詢</a>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>*@
+
+    <!--台車狀態維護-->
+    <div class="search-form mb-4">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#AGVmenu" aria-expanded="true" aria-controls="AGVmenu">
+            <span data-lngKey="AGVmenu" class="caret"></span>
+        </div>
+        <div class="collapse show main-screen-box" id="AGVmenu">
+            <div style="margin-top: 40px !important;"></div>
+            <ul class="d-flex align-items-center flex-wrap" style="width:98%; height: 100%; margin: 0 auto;">
+                <li>
+                    <a href="Tablet?id=CallTrolley" class="btn tablet-but border-img d-block text-color">呼叫<br>台車</a>
+                </li>
+                <!--<li>
+                    <a href="Tablet?id=UnbindTrolley" class="btn tablet-but border-img d-block text-color">綁定<br>解除</a>
+                </li>-->
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            //PageInit();
+            //PageEventBind();
+        });
+    });
+</script>

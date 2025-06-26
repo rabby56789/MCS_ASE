@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCS</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/floating-labels.css" rel="stylesheet" />
+    <link href="~/Content/jq-layout.css" rel="stylesheet" />
+    <link href="~/Content/error.css" rel="stylesheet" />
+    <link href="~/Content/air-datepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/toastr-2.1.4.min.css" rel="stylesheet" />
+    <link href="~/Content/fontawesome-free-5.15.3-web-all.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.min.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <script src="~/Scripts/moment.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/air-datepicker.min.js"></script>
+    <script src="~/Scripts/air-datepicker.zh.js"></script>
+    <script src="~/Scripts/Validation.js"></script>
+    <script src="~/Scripts/toastr-2.1.4.min.js"></script>
+    <script src="~/Scripts/fontawesome-free-5.15.3-web-all.min.js"></script>
+    <script src="~/Scripts/mqtt.min.js"></script>
+    <script src="~/Scripts/datagrid-detailview.js"></script>
+</head>
+<body>
+    <header id="top-bar">
+        <div class="flex-row none-select">
+            <div class="logo" id="logo">
+                <a href="/">
+                    <img src="~/Content/Images/logo.png" />
+                </a>
+                <div class="menu-toggle" id="left-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+            <div class="head-inform flex-row">
+                <div class="flex-row">
+                    <div class="func-group" id="func-group">
+                        <button id="btnFrontOffice" class="dropbtn">
+                            <h4 data-lngKey="pages"></h4>
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                        <div id="dropdownFrontOffice" class="drop-content flex-column">
+                            <a href="#">Link 1</a>
+                            <a href="#">Link 2</a>
+                            <a href="#">Link 3</a>
+                        </div>
+                    </div>
+                    <div class="head-tabs" id="head-tabs">
+                        <i class="fas fa-layer-group" style="color:#ffff;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="mainpage flex-row">
+        <nav class="nav-bar none-select" id="left-nav">
+            <div>
+                <ul id="navMenu" class="nav-menu">
+                </ul>
+            </div>
+        </nav>
+        <div class="main" id="main">
+            @RenderBody()
+        </div>
+        <div id="right-tab" class="side-container flex-row">
+            <div class="side-titles">
+                <div id="rightTab_lightbulb" class="side-title">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div id="rightTab_bell" class="side-title">
+                    <!--新訊息紅色圓形-->
+                    <!--<div id="alarm-count" class="noti-number"></div>-->
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div id="rightTab_user" class="side-title">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div id="rightTab_info" class="side-title">
+                    <i class="fas fa-info"></i>
+                </div>
+            </div>
+            <div class="side-contents flex-row">
+                <!--動作Log頁籤-->
+                <div class="side-content">
+                    <div class="user-manual">
+                        <button id="btnHelpFileDownload" data-lngKey="helpFileDownload"></button>
+                    </div>
+                    <div class="user-log">
+                        <div data-lngKey="userActionLog" class="log-title" style="color:#fff;">
+                        </div>
+                        <div class="log-content">
+                            <div class="log-table">
+                                <table>
+                                    <colgroup>
+                                        <col span="1" style="width: auto;">
+                                        <col span="1" style="        width: auto;">
+                                        <col span="1" style="        width: auto;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th data-lngKey="actionDescribe"></th>
+                                            <th data-lngKey="funcName"></th>
+                                            <th data-lngKey="actionTime"></th>
+                                            @*<th>Column 4</th>
+                                                <th>Column 5</th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableUserActionLog">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!--警告訊息-->
+                <div class="side-content">
+                    <div id="noticeContainer" class="noti-contents">
+                        <!--舊訊息
+                            <div class="sec">
+                            <a href="#" class="flex-row">
+                                <div class="profCont">
+                                    <i class="far fa-envelope"></i>
+                                </div>
+                                <div class="flex-column">
+                                    <div class="txt">James liked your post: "Pure css notification box"</div>
+                                    <div class="txt sub">11/7 - 2:30 pm</div>
+                                </div>
+                            </a>
+                        </div>-->
+                        <!--新訊息
+                        <div class="sec new">
+                            <a href="#" class="flex-row">
+                                <div class="profCont">
+                                    <i class="far fa-envelope"></i>
+                                </div>
+                                <div class="flex-column">
+                                    <div class="txt">James liked your post: "Pure css notification box"</div>
+                                    <div class="txt sub">11/7 - 2:30 pm</div>
+                                </div>
+                            </a>
+                        </div>-->
+                    </div>
+                </div>
+                <!--登入者資訊-->
+                <div class="side-content">
+                    <div class="user-content">
+                        <div class="user-img">
+                            <img src="~/Content/Images/user.png">
+                        </div>
+                        <div class="user-info" style="color: #fff;">
+                            <div>
+                                <h3 id="txtName"><!--登入者姓名--></h3>
+                                <h3 id="txtDepart"><!--登入者所屬部門--></h3>
+                                <h3 id="txtTitle"><!--登入者職稱--></h3>
+                            </div>
+                        </div>
+                        <div class="user-btn">
+                            <button id="btnLogout" data-lngKey="logout"></button>
+                        </div>
+                    </div>
+                </div>
+                <!--其他資訊-->
+                <div id="infoContent" class="side-content">
+                    <div class="info-content">
+                        <h4 class="info-title">業務單位:</h4>
+                        <div class="info-txt">
+                            []
+                        </div>
+                    </div>
+                    <div class="info-content">
+                        <h4 class="info-title">管理單位:</h4>
+                        <div class="info-txt">
+                            []
+                        </div>
+                    </div>
+                    <div class="info-content">
+                        <h4 class="info-title">程式版本:</h4>
+                        <div class="info-txt">
+                            1.0.0.0
+                        </div>
+                    </div>
+                    <div class="info-content">
+                        <h4 class="info-title">最佳解析度:</h4>
+                        <div class="info-txt">
+                            1920 * 1080
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <link href="~/Content/jq-easyui.css" rel="stylesheet" />
+    <link href="~/Content/jq-dt.css" rel="stylesheet" />
+    <script src="~/Scripts/jq-layout.js"></script> <!--包含AJAX抓系統設定參數需先載入-->
+    <script src="~/Scripts/jq-rightTab.js"></script>
+    <script src="~/Scripts/jq-logger-action.js"></script>
+    <script src="~/Scripts/jq-logger-performance.js"></script>
+    <script src="~/Scripts/jq-errorHandler.js"></script>
+    <script src="~/Scripts/jq-i18n.js"></script>
+    <script src="~/Scripts/jq-jquery-extension.js"></script>
+    <script src="~/Scripts/jq-dt.js"></script>
+    <script src="~/Scripts/jq-easyui.js"></script>
+    <script src="~/Scripts/jq-msgBox.js"></script>
+    <script src="~/Scripts/jq-mqtt.js"></script>
+    @RenderSection("Custom", false)
+</body>
+</html>

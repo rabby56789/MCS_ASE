@@ -1,0 +1,19 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "id": "權限群組ID",
+  "name": "權限群組名稱",
+  "functionId": "功能代碼",
+  "functionName": "功能名稱",
+  "remark": "說明",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "import": "匯入",
+  "exportExcel": "匯出excel",
+  "selectFunctionToGroup": "選擇要加至權限群組的功能",
+  "dateRangeError": "日期範圍輸入錯誤",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆"
+}

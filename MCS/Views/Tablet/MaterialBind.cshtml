@@ -1,0 +1,355 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="tablet" /> <!--頁面功能名稱,每頁必加-->
+    <div class="bread-crumb" id="breadcrumb">
+        <span data-lngkey="pad"></span>
+        <span> > </span>
+        <a href="/Tablet"><span data-lngkey="pad_frontpage"></span></a>
+        <span> > </span>
+        <span data-lngkey="material_bind_remove"></span>
+    </div>
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+        <div id="toolbar">
+            <a href="#" id="btnBind" class="easyui-linkbutton log" plain="true" data-lngKey="bind"><i class="fas fa-link fa-lg"></i></a>
+            <a href="#" id="btnUnbind" class="easyui-linkbutton log" plain="true" data-lngKey="unbind"><i class="fas fa-unlink fa-lg"></i></a>
+        </div>
+        <table id="dg"></table>
+    </div>
+
+    <!--彈出式編輯視窗 綁定-->
+    <div id="modal_modify" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_edit">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="trolley_id" type="text" class="form-control" />
+                                    <label for="trolley_id" data-lngKey="trolley_id"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <!--floating-labels使用必加div外框與class屬性-->
+                                <div class="form-label-group in-border must-input">
+                                    <input id="material_id" type="text" class="form-control" />
+                                    <!--label必須放在input之後,否則文字會在輸入框內-->
+                                    <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                                    <label data-lngKey="material_id" for="material_id"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="bind"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--畫面動作-->
+<script>
+    let action = "";
+    let selectedTrolly;
+    let selectedMateriallLot;
+    let queryParams;
+    let doc;
+
+    //頁面元件初始化
+    function PageInit() {
+        action = 'query';
+        $('#dg').datagrid({
+            url: '../api/MaterialBind/QueryMaterialAndTrolley',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'TROLLEY_ID',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'TROLLEY_ID', title: doc.getTextByKey('trolley_id'), sortable: true },
+                { field: 'LOCATION_ID', title: doc.getTextByKey('position') },
+                { field: 'MATERIALLOT', title: doc.getTextByKey('material_id') },
+                { field: 'TROLLEY_STATUS', title: doc.getTextByKey('status'), formatter: statusConvert }
+            ]],
+            onSelect: function (index, field) {
+                //selectedTrolly = field.TROLLY_ID;
+                //selectedMateriallLot = field.MATERIALLOT;
+
+                //$('#btnEdit').linkbutton('enable');
+                //$('#btnDelete').linkbutton('enable');
+            },
+            onLoadSuccess: function (rows) {
+                //selectedTrolly = undefined;
+                //selectedIndex = undefined;
+
+                //$('#btnEdit').linkbutton('disable');
+                //$('#btnDelete').linkbutton('disable');
+                //bindresize(this);
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+        $('#btnExportOnGrid').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let inputs = document.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_modify').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        setNotNull();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+
+        $('#btnBind').on('click', Bind);
+        $('#btnUnbind').on('click', Unbind);
+
+        $('#btnAccept').on('click', Accept);
+
+        $('#modal_modify').on('show.bs.modal', onEditModalShow);
+
+        $(window).on("resize", resizeLayout);
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#queryConditionPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+        $('#edit_factory').addClass('required');
+        $('#edit_phase').addClass('required');
+        $('#edit_depart').addClass('required');
+    }
+
+    //綁定
+    function Bind() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'bind';
+
+        $('#modal_modify').modal('show');
+    }
+
+    //綁定解除
+    function Unbind() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'unbind';
+
+        $('#modal_modify').modal('show');
+    }
+
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+        switch (action) {
+            case "bind":
+                formTitle.innerText = doc.getTextByKey("maintain_bind");
+                break;
+            case "unbind":
+                formTitle.innerText = doc.getTextByKey("maintain_unbind");
+                break;
+        }
+
+        $('#material_id').text('').val('');
+        $('#trolley_id').text('').val('');
+
+        $('#btnAccept').text(doc.getTextByKey("ok"));
+    }
+
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiUser/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //轉換台車狀態文字
+    function statusConvert(val, row) {
+        switch (val) {
+            case "0":
+                return doc.getTextByKey('not_in_place');
+            case "1":
+                return doc.getTextByKey('in_place');
+
+        }
+    }
+
+    //資料異動確認
+    async function Accept() {
+
+        let request = {
+            reqCode: uuid(),
+            podCode: $('#trolley_id').val(), // 台車編號
+            materialLot: $('#material_id').val() // 物料批次
+        };
+
+        switch (action) {
+            case "bind":
+                request.indBind = "1";
+                break;
+            case "unbind":
+                request.indBind = "0";
+                break;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "api/MaterialBind/Execute",
+            data: request,
+            dataType: "json",
+            success: function (response) {
+                switch (action) {
+                    case "bind":
+                        if (response.result == "ok") {
+                            toastr.success(
+                                doc.getTextByKey('bind_trolley_maintain_ok'),
+                                doc.getTextByKey('succeed')
+                            );
+                        } else {
+                            toastr.error(
+                                doc.getTextByKey('bind_trolley_maintain_failed'),
+                                doc.getTextByKey('error')
+                            );
+                        }
+                        break;
+                    case "unbind":
+                        if (response.result == "ok") {
+                            toastr.success(
+                                doc.getTextByKey('unbind_trolley_maintain_ok'),
+                                doc.getTextByKey('succeed')
+                            );
+                        } else {
+                            toastr.error(
+                                doc.getTextByKey('unbind_trolley_maintain_failed'),
+                                doc.getTextByKey('error')
+                            );
+                        }
+                        break;
+                }
+            },
+            complete: function (response) {
+                $('#modal_modify').modal('hide');
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'ok':
+                switch (action) {
+                    case 'query':
+                        LoadData(queryParams);
+                        break;
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+        }
+    }
+
+    //隨機生成唯一碼
+    function uuid() {
+        var d = Date.now();
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            d += performance.now(); //use high-precision timer if available
+        }
+        return 'xxxx-xx-4xxx-yxx-xxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+
+        });
+    });
+</script>

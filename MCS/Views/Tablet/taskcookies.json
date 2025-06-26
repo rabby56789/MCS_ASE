@@ -1,0 +1,50 @@
+﻿{
+  "order": "asc",
+  "page": "1",
+  "sort": "TASK_ID",
+  "total": "1",
+  "rows": [
+    {
+      "TASK_ID": "task20210226090000",
+      "STATUS": "完成",
+      "AGV_ID": "96",
+      "EX_TIME": "00:03:11",
+      "MESSAGE": ""
+    },
+    {
+      "TASK_ID": "task20210226100010",
+      "STATUS": "完成",
+      "AGV_ID": "125",
+      "EX_TIME": "00:02:23",
+      "MESSAGE": ""
+    },
+    {
+      "TASK_ID": "task20210227110100",
+      "STATUS": "完成",
+      "AGV_ID": "96",
+      "EX_TIME": "00:01:15",
+      "MESSAGE": ""
+    },
+    {
+      "TASK_ID": "task20210227113030",
+      "STATUS": "完成",
+      "AGV_ID": "125",
+      "EX_TIME": "00:02:30",
+      "MESSAGE": ""
+    },
+    {
+      "TASK_ID": "task20210228144540",
+      "STATUS": "取消",
+      "AGV_ID": "96",
+      "EX_TIME": "00:00:34",
+      "MESSAGE": "儲位狀態異常"
+    },
+    {
+      "TASK_ID": "task20210228151119",
+      "STATUS": "完成",
+      "AGV_ID": "125",
+      "EX_TIME": "00:05:10",
+      "MESSAGE": ""
+    }
+  ]
+}

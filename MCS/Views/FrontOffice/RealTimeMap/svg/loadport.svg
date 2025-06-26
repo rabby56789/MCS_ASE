@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 10 15">
+    <defs>
+        <style>.lp-1{isolation:isolate;}.lp-2{opacity:0.75;mix-blend-mode:screen;}.lp-3,.lp-4{fill:#b2ffff;}.lp-4,.lp-7,.lp-8{opacity:0.5;}.lp-5{fill:#c1272d;}.lp-6{fill:none;stroke:#c1272d;stroke-miterlimit:10;stroke-width:0.25px;}.lp-7{fill:#f76d00;}.lp-8,.lp-9{fill:#f15a24;}</style>
+    </defs>
+    <title>設備</title>
+    <g class="lp-1">
+        <g id="圖層_1" data-name="圖層 1">
+            <image class="lp-2" width="32" height="31" transform="translate(-27 -4)" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAfCAYAAACGVs+MAAAACXBIWXMAAAsSAAALEgHS3X78AAAAeklEQVRIS+2UUQrAMAhDdez+V3ZfQmFWF2kpg+RTrHkErZqZnNRVNewWAQhAAALcVUMoVX3Vml8qnkBkntULKQTuJtEb94cGIglk5mMdTOI7wCYR4EcAvt2zHWteAXaGIvmWw8OQBFwzk4a5SCeBxcITWCwCEIAABHgA8tAnMedvwLAAAAAASUVORK5CYII="/>
+            <image class="lp-2" width="32" height="32" transform="translate(-27 -12)" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsSAAALEgHS3X78AAAAfElEQVRYR+2UUQrAMAhDdez+V3ZfQmFWF2kpg+RTrHkErZqZnNRVNewWAQhAAALcVUMoVX3Vml8qnkBkntULKQTuJtEb94cGIglk5mMdTOI7wCYR4EcAvt2zHWteAXaGIvmWw8OQBFwzk4a5SCeBxcITWCwCEIAABDgO8AC0ryczmwUd/QAAAABJRU5ErkJggg=="/>
+            <rect class="lp-3" x="2.91" y="9.1" width="3.6" height="3.6" transform="translate(15.62 6.19) rotate(90)"/>
+            <path class="lp-4" d="M3.24,13H6.13l.39-.29H2.91Z"/>
+            <rect class="lp-3" x="4.6" y="10.35" width="6.55" height="0.55" transform="translate(18.5 2.75) rotate(90)"/>
+            <polygon class="lp-4" points="8.43 13.9 8.43 13.9 8.43 13.9 8.4 14.23 7.91 14.23 7.88 13.9 8.43 13.9"/>
+            <rect class="lp-3" x="-1.72" y="10.35" width="6.55" height="0.55" transform="translate(12.18 9.07) rotate(90)"/>
+            <polygon class="lp-4" points="1.55 13.9 1.55 13.9 1.55 13.9 1.52 14.23 1.03 14.23 1 13.9 1.55 13.9"/>
+            <rect class="lp-3" x="4.44" y="9.96" width="0.55" height="7.43" transform="translate(18.39 8.96) rotate(90)"/>
+            <path class="lp-4" d="M.6,8.89l.19.48H8.67l.17-.48Z"/>
+            <image class="lp-2" width="32" height="32" transform="translate(-11 -2)" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsSAAALEgHS3X78AAAA3UlEQVRYR+2WUQ7DIAxDnWmn4ZJVL9nrsB8ieSyrwyTEPvBnGuLXQGit1oqVeqiE2doAG2A5wFMlhDKzMP7DTNvQGjbu1zHTQNE8gJurfAdJFs4B9ObnGW/BcdSWj5Yvi+tDmDXnZ5777ayQNACrNy/FUMp77A4wUA4g6iQb9xCAPitN9wDcQn6zyJBjnCu2IdeBifpzAB4jHzEAuK7PDeYY54pRzHUg2kY2jID0BALIXEQj9wAwfBnpDngBL8jt7TVoDmQ64Fr6LXAt/Rqylv0PTJA+hJO1ATbABngBDeJzz7AX3qsAAAAASUVORK5CYII="/>
+            <circle class="lp-5" cx="4.81" cy="13.7" r="0.24"/>
+            <circle class="lp-6" cx="4.81" cy="13.7" r="0.24"/>
+            <g id="Foup">
+                <path class="lp-7" d="M6.25,7.31l-.16-.16v3h0l-3,0v0h0l.08.15a.18.18,0,0,0,.08.05h2.9a.12.12,0,0,0,.09,0,.11.11,0,0,0,0,0V7.46s0,0,0,0A.16.16,0,0,0,6.25,7.31Z"/>
+                <path class="lp-8" d="M6.09,10.11l.18.18a.07.07,0,0,0,0-.06V7.42a.17.17,0,0,0,0-.12l-.16-.15v3Z"/>
+                <rect class="lp-9" x="3.13" y="7.15" width="2.96" height="2.96" rx="0.01"/>
+                <rect class="lp-3" x="0.6" y="0.65" width="8.24" height="8.24"/>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,184 @@
+﻿.content-page {
+    margin: 20px;
+    margin-right: 60px;
+}
+
+.container * {
+    text-align: left;
+}
+
+.search-form {
+    width: 100%;
+    position: relative;
+    min-height: 60px;
+}
+
+.search-content {
+    padding: 1rem 1rem 0px;
+    padding-top: 40px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background: #FFF;
+    width: 100%;
+    z-index: 0;
+}
+
+.form-control {
+    border: 1px solid #2B2F51;
+}
+
+    .form-control:focus {
+        border: 1px solid #2B2F51;
+    }
+
+.must-input input {
+    border-color: #6C99D4;
+}
+
+    .must-input input:focus {
+        border-color: #6C99D4;
+    }
+
+.container > div {
+    margin-bottom: 1vh;
+}
+
+.ui-timepicker-container {
+    z-index: 1151 !important;
+}
+
+ui-state-hover {
+    background-color: #2774AE;
+}
+
+.form-label-group input:not(:placeholder-shown) ~ label, .form-label-group input:focus ~ label, .form-label-group textarea:not(:placeholder-shown) ~ label, .form-label-group textarea:focus ~ label, .form-label-group select ~ label {
+    font-size: 1.25em;
+    color: var(--titlecolor);
+}
+
+.btn-block {
+    background: -webkit-linear-gradient(90deg, #48709A 0%,#48709A 60%, #8F52A6 100%);
+    background: -o-linear-gradient(90deg, #48709A 0%,#48709A 60%, #8F52A6 100%);
+    background: -moz-linear-gradient(90deg, #48709A 0%,#48709A 60%, #8F52A6 100%);
+    background: linear-gradient(90deg, #48709A 0%,#48709A 60%, #8F52A6 100%);
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: #FFF;
+    border-radius: 5px;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    height: 40px;
+    padding: 0;
+    line-height: 40px;
+    position: absolute;
+    left: 50%;
+    top: -20px;
+    transform: translateX(-50%);
+    z-index: 1;
+    font-size: 1rem;
+}
+
+input, textarea, select, button {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: var(--background-transparent);
+    color: #fff;
+}
+
+    select > option {
+        color: black;
+    }
+
+/*option {
+    background-color: transparent;
+    color: white;
+}*/
+
+option[disabled] {
+    color: gray;
+}
+
+
+.form-label-group.in-border label::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    background: transparent;
+    height: 4px;
+    top: 50%;
+    left: .7em;
+    right: .7em;
+    z-index: -1;
+    visibility: hidden;
+    color: #2E3155;
+}
+
+
+.blink {
+    animation: fade 800ms infinite;
+    -webkit-animation: fade 800ms infinite;
+}
+
+.close {
+    color: #FFF;
+    font-size: 2.5rem;
+    line-height: 2rem;
+}
+
+    .close:hover {
+        color: #FFF;
+    }
+
+    .close:focus {
+        outline: 0;
+    }
+
+#form_edit > .row {
+    width: 100%;
+    margin: 0 auto;
+}
+
+@keyframes fade {
+    from {
+        border: 1px solid #d9ffff;
+        box-shadow: 0 0 6px rgba(217,255,255,.5);
+    }
+
+    50% {
+        border: 1px solid rgba(217,255,255,.31);
+        box-shadow: 0 0 6px rgba(217,255,255,.2);
+    }
+
+    to {
+        border: 1px solid #d9ffff;
+        box-shadow: 0 0 6px rgba(217,255,255,.5);
+    }
+}
+
+@-webkit-keyframes fade {
+    from {
+        border: 1px solid #d9ffff;
+        box-shadow: 0 0 6px rgba(217,255,255,.5);
+    }
+
+    50% {
+        border: 1px solid rgba(217,255,255,.31);
+        box-shadow: 0 0 6px rgba(217,255,255,.2);
+    }
+
+    to {
+        border: 1px solid #d9ffff;
+        box-shadow: 0 0 6px rgba(217,255,255,.5);
+    }
+}
+
+/*fontawesome 資料操作圖示置中*/
+.svg-inline--fa.fa-lg {
+    vertical-align: bottom;
+}
+
+/*DataGrid 大小固定*/
+.tableParent {
+    width: 100%;
+    height:500px;
+}

@@ -1,0 +1,8 @@
+<svg id="wait" data-name="圖層 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 34">
+    <defs>
+        <style>.wait-1{fill:none;stroke:#fcee7d;stroke-miterlimit:10;stroke-width:0.5px;}.wait-2{font-size:8.34px;fill:#fcee7d;font-family:jf-openhuninn-1.1;}</style>
+    </defs>
+    <title>UI</title>
+    <path class="wait-1" d="M35.14,1H4.82A1.32,1.32,0,0,0,3.5,2.32v16a1.32,1.32,0,0,0,1.32,1.32H17.11L20,22.51l2.88-2.88H35.14a1.32,1.32,0,0,0,1.32-1.32v-16A1.32,1.32,0,0,0,35.14,1Z"/>
+    <text class="wait-2" transform="translate(7.11 12.69)">待命中</text>
+</svg>

@@ -1,0 +1,20 @@
+﻿{
+  "searchCondition": "查詢條件",
+  "id": "群組ID",
+  "name": "群組名稱",
+  "userId": "使用者ID",
+  "userName": "員工姓名",
+  "employeeId": "員工工號",
+  "remark": "說明",
+  "search": "查詢",
+  "add": "新增",
+  "edit": "編輯",
+  "delete": "刪除",
+  "import": "匯入",
+  "exportExcel": "匯出excel",
+  "selectUserToGroup": "選擇要加至群組的使用者",
+  "dateRangeError": "日期範圍輸入錯誤",
+  "beforePageText": "第",
+  "afterPageText": "頁  共 {pages} 頁",
+  "displayMsg": "目前顯示第 {from} - {to}   共 {total} 筆"
+}

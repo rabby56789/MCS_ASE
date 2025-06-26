@@ -1,0 +1,50 @@
+﻿{
+  "order": "asc",
+  "page": "1",
+  "sort": "TASK_ID",
+  "total": "1",
+  "rows": [
+    {
+      "TASK_ID": "task20210226090000",
+      "STATUS": "待執行",
+      "AGV_ID": "96",
+      "STARTINGPOINT": "11,20",
+      "ENDINGPOINT": "19,19"
+    },
+    {
+      "TASK_ID": "task20210226100010",
+      "STATUS": "待執行",
+      "AGV_ID": "125",
+      "STARTINGPOINT": "6,8",
+      "ENDINGPOINT": "22,23"
+    },
+    {
+      "TASK_ID": "task20210227110100",
+      "STATUS": "待執行",
+      "AGV_ID": "96",
+      "STARTINGPOINT": "11,20",
+      "ENDINGPOINT": "19,19"
+    },
+    {
+      "TASK_ID": "task20210227113030",
+      "STATUS": "待執行",
+      "AGV_ID": "125",
+      "STARTINGPOINT": "6,8",
+      "ENDINGPOINT": "22,23"
+    },
+    {
+      "TASK_ID": "task20210228144540",
+      "STATUS": "待執行",
+      "AGV_ID": "96",
+      "STARTINGPOINT": "11,20",
+      "ENDINGPOINT": "19,19"
+    },
+    {
+      "TASK_ID": "task20210228151119",
+      "STATUS": "待執行",
+      "AGV_ID": "125",
+      "STARTINGPOINT": "6,8",
+      "ENDINGPOINT": "22,23"
+    }
+  ]
+}

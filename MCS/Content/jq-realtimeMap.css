@@ -1,0 +1,97 @@
+﻿.container {
+    margin: 0 auto;
+    width: 100%;
+    height: 100vh;
+}
+
+.swiper-slide {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mySwiper .swiper-slide img {
+    opacity: 0.4;
+    width: 50%;
+    height: 50%;
+}
+
+.mySwiper .swiper-slide-thumb-active img {
+    opacity: 1;
+    box-shadow: 0px 5px 20px 20px rgb(181, 219, 9) !important;
+}
+
+.mySwiper2 {
+    height: 80%;
+}
+
+.mySwiper {
+    height: 20%;
+}
+
+.text-on {
+    color: #fff;
+    position: absolute;
+    top: 38%;
+    left: 35%;
+    font-size: 24px;
+    font-weight: bolder;
+}
+
+@media (max-width:767px) {
+    .text-on {
+        top: 42%;
+        left: 25%;
+        font-size: 15px;
+    }
+}
+
+.logo-on {
+    opacity: 0.8;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 12%;
+    left: 15%;
+}
+
+
+.fix {
+    width: 50% !important;
+    height: 70% !important;
+    margin-top: 50px;
+}
+
+.swiper-slide-shadow-top,
+.swiper-slide-shadow-bottom,
+.swiper-slide-shadow-left,
+.swiper-slide-shadow-right {
+    box-shadow: 0px 10px 20px 20px rgb(181, 219, 9) !important;
+}
+
+body {
+    background: rgb(48, 47, 47);
+}
+
+.fix a {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}

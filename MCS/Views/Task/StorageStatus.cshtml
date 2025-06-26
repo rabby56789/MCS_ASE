@@ -1,0 +1,334 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+}
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="storageStatus" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret"></span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_storage_name" name="STORAGE_NAME" class="form-control required" />
+                            <label for="query_storage_name" data-lngKey="storage_name"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_area_name" name="AREA_NAME" class="form-control required" />
+                            <label for="query_area_name" data-lngKey="area_name"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <select id="query_is_lock" name="IS_LOCK" type="text" class="form-control">
+                                <option value=""></option>
+                            </select>
+                            <label for="query_is_lock" data-lngKey="is_lock"></label>
+                        </div>
+                    </div>
+                    <div class="col-md align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+        <div id="toolbar">
+            <!--<a href="#" id="btnLock" class="easyui-linkbutton log" style=" width:110px " plain="true" data-lngKey="lock" onclick="executeLock(this.id)"><i class="fas fa-lock fa-lg"></i></a>-->
+            <a href="#" id="btnUnlock" class="easyui-linkbutton log" style=" width:110px " plain="true" data-lngKey="unlock" onclick="executeLock(this.id)"><i class="fas fa-unlock-alt fa-lg"></i></a>
+        </div>
+        <table id="dg"></table>
+    </div>
+</div>
+
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let selectedStorage_guid;
+    let selectedStorage_id;
+    let queryParams;
+    let doc;
+    let bannedModify = []; //禁止修改的欄位input name
+
+    //頁面元件初始化
+    function PageInit() {
+        $('#dg').datagrid({
+            url: '../api/ApiStorageStatus/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'INSERT_TIME',
+            sortOrder: 'desc',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'STORAGE_GUID', title: '', width: '0%', hidden: true },
+                { field: 'STORAGE_ID', title: doc.getTextByKey('storage_id'), sortable: true },
+                { field: 'STORAGE_NAME', title: doc.getTextByKey('storage_name'), sortable: true },
+                { field: 'QRCODE', title: doc.getTextByKey('qr_code')},
+                { field: 'AREA_GUID', title: '', width: '0%', hidden: true },
+                { field: 'AREA_ID', title: doc.getTextByKey('area_id')},
+                { field: 'AREA_NAME', title: doc.getTextByKey('area_name')},
+                { field: 'JOB_NAME', title: doc.getTextByKey('job_name')},
+                { field: 'IS_LOCK', title: doc.getTextByKey('is_lock'), sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedStorage_guid = field.STORAGE_GUID;
+                selectedStorage_id = field.STORAGE_ID;
+                selectedIndex = index;
+                if (field.IS_LOCK == "已鎖定") {
+                    //$('#btnLock').linkbutton('disable');
+                    $('#btnUnlock').linkbutton('enable');
+                } else if (field.IS_LOCK == "未鎖定") {
+                    //$('#btnLock').linkbutton('enable');
+                    $('#btnUnlock').linkbutton('disable');
+                }
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    param.IS_LOCK = 1;
+                    return true; //預設初次載入頁面直接查詢
+                    //return false; //預設初次載入頁面不查詢
+                }
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+                selectedStorage_guid = undefined;
+                selectedStorage_id = undefined;
+                $('#btnLock').linkbutton('disable');
+                $('#btnUnlock').linkbutton('disable');
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        $('#btnLock').linkbutton('disable');
+        $('#btnUnlock').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let tagArr = document.getElementsByTagName("input");
+        for (let i = 0; i < tagArr.length; i++) {
+            tagArr[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        setNotNull();
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+        GetAllOption();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', () => { Query(1) });
+        $('.btn-confirm').on('click', Confirm);
+
+        $(window).on("resize", resizeLayout);
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#formQueryPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_type').addClass('required');
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+    }
+
+    //查詢
+    async function Query(pageIdx) {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+        selectedStorage_guid = undefined;
+        selectedStorage_id = undefined;
+
+        $('#btnLock').linkbutton('disable');
+        $('#btnUnlock').linkbutton('disable');
+
+        queryParams = $('#formQuery').serializeObject();
+        console.log(queryParams);
+        //return;
+
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiStorageStatus/Count",
+                data: queryParams,
+                dataType: "json",
+                success: function (response) {
+                    queryParams.total = response.count;
+                    resolve(queryParams);
+                }
+            });
+        }).then((parms) => {
+            $("#dg").datagrid('options').queryParams = parms;
+            $('#dg').datagrid('gotoPage', pageIdx);
+
+            return;
+        }).then(() => {
+            $('#btnExportOnGrid').linkbutton('enable');
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //鎖定與解鎖
+    function executeLock(btnId) {
+        if (btnId == 'btnLock') {
+            action = 'lock';
+            JQMessageBox(
+                doc.getTextByKey('confirm'),
+                doc.getTextByKey('lockMsg'),
+                {
+                    'Y': doc.getTextByKey('y'),
+                    'N': doc.getTextByKey('n')
+                },
+                Confirm
+            );
+        } else if (btnId == 'btnUnlock') {
+            action = 'unlock';
+            JQMessageBox(
+                doc.getTextByKey('confirm'),
+                doc.getTextByKey('unlockMsg'),
+                {
+                    'Y': doc.getTextByKey('y'),
+                    'N': doc.getTextByKey('n')
+                },
+                Confirm
+            );
+        }
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'lock':
+                        execute(1);
+                        break;
+                    case 'unlock':
+                        execute(0);
+                        break;
+                }
+                break;
+            case 'N':
+                break;
+        }
+    }
+
+    async function execute(isLock) {
+        var data = {};
+        data.GUID = selectedGUID;
+        data.isLock = isLock;
+        data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        //紀錄log用
+        data.STORAGE_GUID = selectedStorage_guid;
+        data.STORAGE_ID = selectedStorage_id;
+        //取得目前頁面
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+        let getSqlSucceed = await getSql($('#funcName').val(), 'edit', data);
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiStorageStatus/execute",
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+                guid = response.guid;
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+                $('.ajaxRequest').attr('disabled', false);
+            }, complete: function () {
+                Query(currentPage);
+            }
+        });
+    }
+
+    //下拉選單欄位
+    function GetAllOption() {
+        GetOption('is_lock', 'query_is_lock');
+    }
+
+    //取得下拉選單內容 (欄位名,網頁物件id)
+    function GetOption(col, input_id) {
+        $.ajax({
+            url: '../api/apiStorageStatus/GetOption',
+            type: 'POST',
+            data: {
+                name: col
+            },
+            dataType: 'json',
+            success: function (data) {
+                for (i in data.rows) {
+                    $('<option value="' + data.rows[i].KEY_CODE + '">' + data.rows[i].KEY_NAME + '</option>').appendTo('#' + input_id + '');
+                }
+                $('#query_is_lock').val(1);//預設先搜尋已鎖定資料
+            }
+        });
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+        });
+    });
+</script>

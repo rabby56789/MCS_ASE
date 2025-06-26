@@ -1,0 +1,12 @@
+﻿{
+  "baseManage": "基本资料权限管理模组",
+  "woManage": "工单管理模组",
+  "barcodeManage": "条码管理模组",
+  "maintenanceManage": "维修管理模组",
+  "reworkManage": "重工管理模组",
+  "qcManage": "品质管理模组",
+  "packageManage": "包装管理模组",
+  "userManage": "使用者管理",
+  "employeeManage": "员工资料管理",
+  "pages": "页面"
+}

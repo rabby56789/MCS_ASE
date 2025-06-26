@@ -1,0 +1,938 @@
+﻿<!--此頁為單Table UI 標準格式範本-->
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/73d7badb09.js" crossorigin="anonymous"></script>
+}
+
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="paramater" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret">查詢條件</span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <!--floating-labels使用必加div外框與class屬性-->
+                    <div class="form-label-group in-border">
+                        <input id="query_function" type="text" class="form-control" />
+                        <!--label必須放在input之後,否則文字會在輸入框內-->
+                        <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                        <label data-lngKey="function" for="query_function"></label>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 form-group">
+                    <!--floating-labels使用必加div外框與class屬性-->
+                    <div class="form-label-group in-border">
+                        <input id="query_filter_key" type="text" class="form-control" />
+                        <!--label必須放在input之後,否則文字會在輸入框內-->
+                        <!--必填欄位 form-lebel-group 層div 必須加 must-input 的Class屬性-->
+                        <label data-lngKey="filter_key" for="query_filter_key"></label>
+                    </div>
+                </div>
+
+                <div class="col-md align-self-end align-items-end form-group">
+                    <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton log" plain="true" data-lngKey="add"><i class="fas fa-file-medical fa-lg"></i></a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton log" plain="true" data-lngKey="edit"><i class="fas fa-file-signature fa-lg"></i></a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton log" plain="true" data-lngKey="delete"><i class="fas fa-trash-alt fa-lg"></i></a>
+            <a href="#" id="btnExportOnGrid" class="easyui-linkbutton log" plain="true" data-lngKey="exportExcel"><i class="fas fa-file-export fa-lg"></i></a>
+        </div>
+        @* EasyUI *@
+        <table id="dg"></table>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade modalGroup" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit">
+                        <div class="row">
+                            @* 功能代碼 *@
+                            <div id="divAdd1" class="col-md-6 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="edit_function" name="FUNCTION" class="form-control" />
+                                    <label data-lngKey="function" for="edit_function"></label>
+                                    <button type="button" id="search_function" data-target-name="" data-bind-lngKey="function_alert"
+                                            class="button queryBtn float-right noText log">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @* 塞選條件 *@
+                            <div class="col-md-6 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_filter_key" name="FILTER_KEY" type="text" class="form-control" />
+                                    <label data-lngKey="filter_key" for="edit_filter_key"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_text" name="TEXT" type="text" class="form-control" />
+                                    <label data-lngKey="text" for="edit_text"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_value" name="VALUE" type="text" class="form-control" />
+                                    <label data-lngKey="value" for="edit_value"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <select id="edit_type" name="TYPE" class="form-control required">
+                                        <option value="">未選取</option>
+                                        <option value="nvarchar">nvarchar</option>
+                                        <option value="int">int</option>
+                                    </select>
+                                    <label data-lngKey="type" for="edit_type"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_remark" name="REMARK" type="text" class="form-control" />
+                                    <label data-lngKey="remark" for="edit_remark"></label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="confirm">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--代號選擇MODAL-->
+    <div id="FunctionModal" class="modal fade modalGroup" role="dialog">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action2"></span></h4>
+                    <button type="button" id="btnFunctionModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    @* 代號查詢表單 *@
+                    <form id="formQuery_function">
+                        <div class="row">
+                            @* 功能代號 *@
+                            <div class="col-md-9 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="input_modal_query_function" name="FUNCTION_ID" type="text" class="form-control" />
+                                    <label for="input_modal_query_function" data-lngKey="function"></label>
+                                </div>
+                            </div>
+                            @* 功能按鍵 *@
+                            <div class="col-md-2 form-group">
+                                <button type="button" id="btn_functionmodal_query" class="btn btn-primary log ajaxRequest" data-lngKey="search"></button>
+                            </div>
+                        </div>
+                    </form>
+                    @* EasyUI *@
+                    <table id="dg_functionmodal"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn_functionmodal_select" class="btn btn-primary log ajaxRequest " data-dismiss="modal" data-lngKey="ok"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!--畫面動作-->
+<script>
+    let action = "";
+    let selectedIndex;
+    let selectedGUID;
+    let queryParams, queryFuntionModalParams;
+    let doc;
+    let bannedModify = []; //禁止修改的欄位input name
+
+    var showType = "";
+
+    
+
+    //頁面元件初始化
+    function PageInit() {
+        $('#dg').datagrid({
+            url: '../api/ApiSysParamater/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            //sortName: 'FUNCTION',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'FUNCTION', title: doc.getTextByKey('function'), width: '15%', sortable: true },
+                { field: 'FILTER_KEY', title: doc.getTextByKey('filter_key'), width: '15%', sortable: true },
+                { field: 'TEXT', title: doc.getTextByKey('text'), width: '20%', sortable: true },
+                { field: 'VALUE', title: doc.getTextByKey('value'), width: '20%', sortable: true },
+                { field: 'TYPE', title: doc.getTextByKey('type'), width: '15%', sortable: true },
+                { field: 'REMARK', title: doc.getTextByKey('remark'), width: '15%', sortable: true },
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedIndex = index;
+
+                $('#btnEdit').linkbutton('enable');
+                $('#btnDelete').linkbutton('enable');
+
+            }, onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    return false; //預設初次載入頁面不查詢
+                } else {
+                    param.total = queryParams.total;
+                    param.FUNCTION = queryParams.FUNCTION;
+                    param.FILTER_KEY = queryParams.FILTER_KEY;
+                    param.INSERT_TIME_START = queryParams.INSERT_TIME_START;
+                    param.INSERT_TIME_END = queryParams.INSERT_TIME_END;
+
+                    //顯示模式
+                    switch (queryParams.showType) {
+                        //選擇第一筆
+                        case "addthen":
+                            //排序必須設定
+                            param.sort = queryParams.sort;
+                            param.order = queryParams.order;
+                            break;
+                        //回到指定 page, index
+                        case "editthen":
+                            //排序必須設定
+                            param.sort = queryParams.sort;
+                            param.order = queryParams.order;
+                            break;
+                        default:
+                            break;
+                        // code block
+                    }
+                }
+            }, onLoadSuccess: function (data) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+
+                $('#btnEdit').linkbutton('disable');
+                $('#btnDelete').linkbutton('disable');
+                //bindresize(this);
+                //沒有查到資料的話 不可以匯出
+                if (0 == data.rows.length) {
+                    $('#btnExportOnGrid').linkbutton('disable');
+                }
+
+                //顯示模式
+                switch (queryParams.showType) {
+                    //選擇第一筆
+                    case "addthen":
+                        $('#dg').datagrid('selectRow', 0);
+                        break;
+                    //回到指定 page, index
+                    case "editthen":
+                        $('#dg').datagrid('selectRow', 0);
+                        break;
+                    default:
+                        break;
+                    // code block
+                }
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+        //$('#btnExportOnGrid').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let inputs = document.getElementsByTagName("input");
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#FunctionModal').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+
+        //#endregion
+
+        setNotNull();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', function () {
+            Query();
+        });
+        $('#btnAdd').on('click', Add);
+        $('#btnEdit').on('click', Edit);
+        $('#btnDelete').on('click', Delete);
+        $('#btnExportOnGrid').on('click', ExportOnClick);
+        $('#btnAccept').on('click', Accept);
+        $('.btn-confirm').on('click', Confirm);
+
+        //FunctionModal
+        $('#btn_functionmodal_select').on('click', FunctionModalStorage);
+        $('#btn_functionmodal_query').on('click', FunctionModalQuery);
+
+        // input 旁search button
+        $('#search_function').on('click', FunctionShow);
+
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+        //代號選擇modal
+        $('#FunctionModal').on('shown.bs.modal', onFunctionSelectedModalShow);
+
+        $('#btnFunctionModal_edit').on('click', function () {
+            ModalOnFocus("modal_edit");
+        });
+        
+
+        $(window).on("resize", resizeLayout);
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#queryConditionPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+        $('#edit_id').addClass('required');
+        $('#edit_factory').addClass('required');
+        $('#edit_phase').addClass('required');
+        $('#edit_depart').addClass('required');
+    }
+
+    function test() {
+        let argLen = arguments.length;
+        //console.log("no paramater");
+        if (argLen === 0) {
+            console.log('0個參數')
+        }
+        if (argLen === 1) {
+            console.log('一個參數')
+        }
+        if (argLen === 2) {
+            console.log('兩個參數')
+        }
+    }
+   
+
+
+    //查詢
+    function Query() {
+        let argLen = arguments.length;
+        let showType = "";//顯示模式
+        if (argLen === 0) {
+            ;//nothing to do
+        }
+        if (argLen === 1) {
+            showType = arguments[0];
+        }
+
+        action = 'query';
+        let rSort = "FUNCTION";
+        let rOrder = "ASC";
+        switch (showType) {
+            case "addthen":
+                rSort = "INSERT_TIME";
+                rOrder = "DESC";
+                break;
+            case "editthen":
+                rSort = "UPDATE_TIME";
+                rOrder = "DESC";
+                break;
+            default:
+                break;
+            // code block
+        }
+
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        queryParams = {
+            FUNCTION: $('#query_function').val(),
+            FILTER_KEY: $('#query_filter_key').val(),
+
+            //NOT_AUTHORITY: $('#query_authorityStatus').is(":checked") ? true : false
+        };
+
+        $.post(
+            "../api/ApiSysParamater/Count",
+            queryParams,
+            function (response) {
+                let Count = response.count;
+                queryParams.total = Count;
+                queryParams.sort = rSort;
+                queryParams.order = rOrder;
+                queryParams.showType = showType;
+                queryParams.rows = '10';
+                queryParams.page = '1';
+                
+
+                if (Count > 1000) {
+                    JQMessageBox(
+                        globalDoc.getTextByKey('confirm'),
+                        globalDoc.getTextByKey('over1000'),
+                        {
+                            'Y': globalDoc.getTextByKey('y'),
+                            'N': globalDoc.getTextByKey('n'),
+                            "export": globalDoc.getTextByKey('expXls')
+                        },
+                        Confirm
+                    );
+                }
+                else { LoadData(queryParams); }
+            });
+    }
+
+    //查詢:Show至Grid上
+    async function LoadData(params) {
+        //LOG:執行前抓SQL與紀錄執行前時間
+        let getSqlSucceed = await getSql($('#funcName').val(), 'Query', queryParams);
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiSysParamater/Query",
+            data: params,
+            dataType: "json",
+            complete: function (jqXHR, textStatus) { //成功或失敗均會執行
+                if (textStatus == "success") {
+                    $("#dg").datagrid('loadData', jqXHR.responseJSON);
+                    $('#dg').datagrid('gotoPage', 1); //強制返回第一頁
+                    $('#btnExportOnGrid').linkbutton('enable');
+
+                    //LOG:紀錄執行時間差
+                    if (getSqlSucceed) {
+                        saveRequestPerformanceLog(
+                            sessionStorage.getItem('userGuid'),
+                            sessionStorage.getItem('groupId')
+                        );
+                    }
+                }
+                //執行完畢重啟按鈕
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        })
+    }
+
+    //載入
+    async function FunctionModalLoadData(params) {
+        action = 'query';
+        let dataurl = '../api/ApiSysParamater/SearchFunctionID'; //撈取 代號資料
+        //LOG:執行前抓SQL與紀錄執行前時間
+        let getSqlSucceed = await getSql($('#funcName').val(), action, params);
+        $.ajax({
+            type: "POST",
+            url: dataurl,
+            data: params,
+            dataType: "json",
+            complete: function (jqXHR, textStatus) { //成功或失敗均會執行
+                if (textStatus == "success") {
+                    $("#dg_functionmodal").datagrid('loadData', jqXHR.responseJSON);
+                    $('#dg_functionmodal').datagrid('gotoPage', 1); //強制返回第一頁
+
+                    //LOG:紀錄執行時間差
+                    if (getSqlSucceed) {
+                        saveRequestPerformanceLog(
+                            sessionStorage.getItem('userGuid'),
+                            sessionStorage.getItem('groupId')
+                        );
+                    }
+                }
+                //執行完畢重啟按鈕
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        })
+    }
+
+    //FUNCTION Modal 查詢
+    function FunctionModalQuery() {
+        //參數
+        queryFuntionModalParams = new Object();
+        queryFuntionModalParams = $('#formQuery_function').serializeObject();
+        //初始化
+        FunctionModalGridInit();
+        //載入資料
+        FunctionModalLoadData(queryFuntionModalParams);
+    }
+    //FUNCTION代號選擇
+    function FunctionModalStorage(e) {
+        $('#FunctionModal').modal('hide');
+        ModalOnFocus("modal_edit");
+        action = "add";
+    }
+
+    //新增,清空欄位後開窗
+    function Add() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'add';
+        selectedGUID = "";
+
+        let elm = document.getElementById("formEdit");
+        //Clear input value
+        for (let i = 0; i < elm.length; i++) {
+            elm[i].value = "";
+            elm[i].disabled = false;
+        }
+
+
+        $('#modal_edit').modal('show');
+    }
+
+    //編輯
+    function Edit() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        let data = { GUID: selectedGUID };
+        action = 'edit';
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiSysParamater/GetOneByGUID",
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                let userData = data.rows[0];
+                let elm = document.getElementById("formEdit");
+
+                for (let i = 0; i < elm.length; i++) {
+                    let name = elm[i].name;
+                    $(elm[i]).val(userData[name]);
+
+                    if (bannedModify.includes(name)) {
+
+                    }
+                }
+                //$('#edit_guid').val(userData.GUID);
+                //$('#edit_function').val(userData.FUNCTION);
+                //$('#edit_filter_key').val(userData.FILTER_KEY);
+                //$('#edit_text').val(userData.TEXT);
+                //$('#edit_value').val(userData.VALUE);
+                //$('#edit_type').val(userData.TYPE);
+                //$('#edit_remark').val(userData.REMARK);
+            },
+            complete: function (url) {
+                $('#modal_edit').modal('show');
+            }
+        });
+    }
+
+    //刪除
+    function Delete() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'delete';
+
+        JQMessageBox(
+            globalDoc.getTextByKey('delete'),
+            globalDoc.getTextByKey('delMsg'),
+            {
+                'Y': globalDoc.getTextByKey('ok'),
+                'N': globalDoc.getTextByKey('cancel')
+            },
+            Confirm
+            , 0
+        );
+    }
+
+    //代號選擇選擇開窗
+    function FunctionShow(e) {
+        $('#FunctionModal').modal('show');
+        ModalOnFocus("FunctionModal");
+              
+        //clear formQuery_function values
+        let inputElms = document.forms["formQuery_function"].getElementsByTagName("input");
+        for (let i = 0; i < inputElms.length; i++) {
+            inputElms[i].value = "";
+        }
+        queryFuntionModalParams = null;
+
+        //query 
+        FunctionModalQuery();
+    }
+
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+
+    function onFunctionSelectedModalShow(e) {
+        //設定FormTitle String 
+        let formTitle = $('#span_action2')[0];
+        formTitle.innerText = doc.getTextByKey("functionSelect"); //代號選擇
+        $('#btn_functionmodal_select').text(doc.getTextByKey("ok"));
+
+        //初始化
+        FunctionModalGridInit();
+        $('#btnStorage').attr('disabled', true);
+    }
+
+    //FunctionModalGridInit() 代號選擇表
+    function FunctionModalGridInit(e) {
+        dataurl = '../api/ApiSysParamater/SearchFunctionID'; //待修改 (撈取 代號資料)
+        $('#dg_functionmodal').datagrid({
+            url: dataurl,
+            method: 'POST',
+            singleSelect: true,
+            height: 350,
+            sortName: 'function_id',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'function_id', title: doc.getTextByKey('function'), width: '100%', sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                $('#btn_functionmodal_select').attr('disabled', false);
+                $('#edit_function').val(field.function_id);
+                action = "add";
+            },
+            onDblClickRow: function (index, field) {
+                $('#btn_functionmodal_select').attr('disabled', false);
+                $('#edit_function').val(field.function_id);
+
+                FunctionModalStorage();
+                ModalOnFocus("modal_edit");
+                action = "add";
+            },
+            onBeforeLoad: function (param) {
+                if (action != 'query') {
+                    return false; //預設初次載入頁面不查詢
+                } else {
+
+                }
+            },
+            onLoadSuccess: function (rows) {
+                $('#btn_functionmodal_query').attr('disabled', false);
+                $('#btn_functionmodal_select').attr('disabled', true);
+            }
+        });
+    }
+
+
+    //匯出(從DataGrid)
+    function ExportOnClick() {
+        if ($(this).linkbutton('options').disabled == true) return;
+        Export();
+    }
+
+    //匯出(從DB)
+    function Export() {
+        $.post("../api/ApiSysParamater/Export", queryParams, function (response) {
+            let url = response.filePath;
+            let $a = $('<a />', {
+                'href': url,
+                'download': null,
+                'text': "click"
+            }).hide().appendTo("body")[0].click();
+
+            URL.revokeObjectURL(url);
+            $('.ajaxRequest').attr('disabled', false);
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        showType = "";
+        let actionUrl, data;
+
+        $('#modal_edit').modal('hide');
+
+        data = $('#formEdit').serializeObject();
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+        } else {
+            data.GUID = selectedGUID
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+        }
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiSysParamater/Insert";
+                showType = "addthen";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiSysParamater/Update";
+                showType = "editthen";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiSysParamater/Delete";
+                break;
+        }
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                toastr.success(
+                    globalDoc.getTextByKey('succeed'),
+                    globalDoc.getTextByKey('prompt')
+                );
+
+                if (getSqlSucceed) {
+                    saveRequestPerformanceLog(
+                        sessionStorage.getItem('userGuid'),
+                        sessionStorage.getItem('groupId')
+                    );
+                }
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        }).done(function () {
+            Query(showType);
+        });
+    }
+
+
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'query':
+                        LoadData(queryParams);
+                        break;
+                    case 'delete':
+                        Accept();
+                        break;
+                }
+                break;
+            case 'N':
+
+                break;
+            case 'export':
+                Export();
+                break;
+        }
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+    //#region 下拉選單方法群
+
+    //刷新下拉選單項目(參數:目標select元件ID,資料來源URL,傳送參數) [是否移至共用區?]
+    function refreshDorpDownListItems(targetSelectElementId, dataSourceUrl, parameters) {
+        let elm = $('#' + targetSelectElementId);
+        let optionElm = document.createElement("option");
+        optionElm.setAttribute("value", "");
+
+        //移除並加入預設選項
+        elm.find('option').remove().end();
+        elm.append(optionElm);
+
+        //沒輸入資料來源Url直接結束
+        if (typeof (dataSourceUrl) == undefined) {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: dataSourceUrl,
+            data: parameters,
+            dataType: "json",
+            success: function (data) {
+                data.rows.forEach(function (item) {
+                    elm.append(`<option value="${item.Key}">${item.Value}</option>`);
+                });
+
+                elm.prop('selectedIndex', 0);
+            }
+        });
+    }
+
+    //下拉選單更改選取
+    function onSelectOptionChange(e) {
+        let targetId = e.target.id;
+        let selectedValue = e.target.value;
+
+        //依照更改下拉選單關聯性刷新
+        switch (targetId) {
+            case "query_factory": //廠
+                refreshDorpDownListItems('query_phase');
+                refreshDorpDownListItems('query_depart');
+                refreshDorpDownListItems('query_company');
+                break;
+            case "query_phase": //區
+                refreshDorpDownListItems('query_depart');
+                refreshDorpDownListItems('query_company');
+                break;
+            case "query_depart": //部門
+                refreshDorpDownListItems('query_company');
+                break;
+        }
+
+        if (selectedValue != "") {
+            switch (targetId) {
+                case "query_factory":  //廠->區
+                    refreshDorpDownListItems('query_phase', '../api/ApiSysParamater/GetListOfPhase', { "FACTORY": selectedValue });
+                    break;
+                case "query_phase": //區->部門
+                    refreshDorpDownListItems('query_depart', '../api/ApiSysParamater/GetListOfDepart', { "PHASE": selectedValue });
+                    break;
+                case "query_depart": //部門->委外廠商
+                    refreshDorpDownListItems('query_company', '../api/ApiSysParamater/GetListOfCompany', { "DEPART": selectedValue });
+                    break;
+            }
+        }
+    }
+    //#endregion
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    //find all modal
+    function ModalOnFocus(eleID) {
+        //此元素必須存在
+        if (eleID.length == 0 )
+            return;
+        if ($('#' + eleID).length == 0)
+            return;
+        
+        $('.modalGroup').each(function (index) {
+            let data = $(this);
+            let id = data.attr('id');
+
+            if (eleID == id) {
+                data.css('zIndex', 1050);//顯現
+            }
+            else {
+                data.css('zIndex', 1040);//下沉
+            }
+        });
+    }
+
+    //綁定 lngKey to data-target-name
+    function ButtonNoInnTextBind() {
+        $(".noText").each(function (index) {
+            let data = $(this);
+            let dataBindLngKey = data.attr('data-bind-lngKey');
+            data.attr('data-target-name', doc.getTextByKey(dataBindLngKey));
+            //console.log("dataBindLngKey:" + dataBindLngKey);
+        });
+    }
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+
+            ButtonNoInnTextBind();
+            //頁面預先載入資料
+            Query();
+        });
+    });
+</script>
+
+@* 解決 search button 被svg 擋住問題  *@
+<style>
+    svg {
+        pointer-events: none;
+    }
+</style>
+    

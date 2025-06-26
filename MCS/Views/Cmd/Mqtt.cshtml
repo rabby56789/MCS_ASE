@@ -1,0 +1,1064 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--單頁功能獨立樣式表-->
+@section Custom
+{
+    <link href="~/Content/jq-content.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jq-bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/73d7badb09.js" crossorigin="anonymous"></script>
+
+    <style>
+        #btnSelect {
+            width: 50px;
+        } 
+    </style>
+}
+<div id="content" class="content-page">
+    <input type="hidden" id="funcName" value="cmdmqtt" /> <!--頁面功能名稱,每頁必加-->
+    <!--查詢條件區域-->
+    <div class="form-group search-form">
+        <div class="button btn-block" type="button" data-toggle="collapse" data-target="#searchConditions" aria-expanded="true" aria-controls="searchConditions">
+            <span data-lngKey="searchCondition" class="caret">查詢條件</span>
+        </div>
+        <div id="searchConditions" class="collapse show search-content">
+            <form id="formQuery">
+
+                <div class="row">
+
+                    <div class="col-md-4 col-sm-12 form-group">
+                        <div class="form-label-group in-border must-input agv-content">
+                            <input id="query_iotdevice_name" name="IOTDEVICE_NAME" class="form-control" />
+                            <label for="query_iotdevice_name" data-lngKey="iotdevice_name"></label>
+
+                            <button id="query_iotdevice" data-lngKey="query_iotdevice" type="button" class="button queryBtn float-right log">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_iotdevice_ip" name="IOTDEVICE_IP" type="text" class="form-control" />
+                            <label data-lngKey="iotdevice_ip" for="query_iotdevice_ip"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-label-group in-border must-input">
+                            <input id="query_name" name="NAME" type="text" class="form-control" />
+                            <label data-lngKey="name" for="query_name"></label>
+                        </div>
+                    </div>
+
+                    @*<div class="col-md-6 form-group">
+                        <div class="form-label-group in-border must-input">
+                            <select id="query_type" name="TYPE" class="form-control required">
+                                <option value="">未選取</option>
+                                <option value="DI">DI</option>
+                                <option value="DO">DO</option>
+                            </select>
+                            <label data-lngKey="type" for="query_type"></label>
+                        </div>
+                    </div>*@
+
+                    <div class="col-md align-self-end align-items-end form-group">
+                        <button data-lngKey="search" type="button" id="btnQuery" class="button float-right log"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--資料顯示表格區-->
+    <div class="tableParent">
+        <div id="toolbar">
+            <a href="#" id="btnAdd" class="easyui-linkbutton log" plain="true" data-lngKey="add"><i class="fas fa-file-medical fa-lg"></i></a>
+            <a href="#" id="btnEdit" class="easyui-linkbutton log" plain="true" data-lngKey="edit"><i class="fas fa-file-signature fa-lg"></i></a>
+            <a href="#" id="btnDelete" class="easyui-linkbutton log" plain="true" data-lngKey="delete"><i class="fas fa-trash-alt fa-lg"></i></a>
+            @*<a href="#" id="btnTest" class="easyui-linkbutton log" plain="true" data-lngKey="test"><i class="fas fa-file-export fa-lg"></i></a>*@
+        </div>
+        <table id="dg"></table>
+    </div>  
+
+    <!--彈出式測試視窗-->
+    <div id="modal_test" class="modal fade" role="dialog">
+        <div class="modal-dialog node-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" data-lngKey="testCmdMqtt"></h4>
+                    <button type="button" id="btnCloseModal_test" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formPublish">
+                        <div class="row">
+
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="publish_topic" name="TOPIC" class="form-control" />
+                                    <label for="publish_topic" data-lngKey="topic"></label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <textarea style="width:786px;color:purple" id="publish_command_json" rows="2" placeholder="" readonly="readonly"></textarea>
+                                <button type="button" id="btnPublish" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="publish"></button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formSubscribe">
+                        <div class="row">
+
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="subscribe_clientid" name="CLIENTID" class="form-control" />
+                                    <label for="subscribe_clientid" data-lngKey="clientid"></label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="subscribe_topic" name="TOPIC" class="form-control" />
+                                    <label for="subscribe_topic" data-lngKey="topic"></label>
+                                    <button type="button" id="btnSubscribe" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="subscribe"></button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <textarea style="width:786px;color:green" id="state_return" rows="7" placeholder="" readonly="readonly"></textarea>
+
+                                <button type="button" id="btnStateReturn" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="getMsg"></button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--彈出式編輯視窗-->
+    <div id="modal_edit" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><span id="span_action"></span></h4>
+                    <button type="button" id="btnCloseModal_edit" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEdit">
+                        <div class="row">
+                            <!--IOT名稱-->
+                            <div id="divAdd" class="col-md-4 form-group">
+                                <div class="form-label-group in-border must-input agv-content">
+                                    <input id="edit_iotdevice_name" name="IOTDEVICE_NAME" class="form-control" readonly="readonly" />
+                                    <label for="edit_iotdevice_name" data-lngKey="iotdevice_name"></label>
+
+                                    <button id="edit_iotdevice" data-lngKey="edit_iotdevice" type="button" class="button queryBtn float-right log">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!--SNKEY-->
+                            <div id="divAdd2" class="col-md-4 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_iotdevice_snkey" name="IOTDEVICE_SNKEY" type="text" class="form-control" readonly="readonly" />
+                                    <label for="edit_iotdevice_snkey" data-lngKey="iotdevice_snkey"></label>
+                                </div>
+                            </div>
+                            <!--IOT IP-->
+                            <div id="divAdd3" class="col-md-4 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="edit_iotdevice_ip" name="IOTDEVICE_IP" type="text" class="form-control" readonly="readonly" />
+                                    <label for="edit_iotdevice_ip" data-lngKey="iotdevice_ip"></label>
+                                </div>
+                            </div>
+                            <!--命令ID-->
+                            <div class="col-md-4 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_command" name="COMMAND" type="text" class="form-control" />
+                                    <label for="edit_command" data-lngKey="command"></label>
+                                </div>
+                            </div>
+                            <!--命令名稱-->
+                            <div class="col-md-4 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_name" name="NAME" type="text" class="form-control" />
+                                    <label for="edit_name" data-lngKey="name"></label>
+                                </div>
+                            </div>
+                            <!--命令類型-->
+                            <div class="col-md-4 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <select id="edit_type" name="TYPE" class="form-control required">
+                                        <option value="">未選取</option>
+                                        <option value="DI">DI</option>
+                                        <option value="DO">DO</option>
+                                    </select>
+                                    <label data-lngKey="type" for="edit_type"></label>
+                                </div>
+                            </div>
+                            <!--命令內容-->
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_content" name="CONTENT" type="text" class="form-control" />
+                                    <label for="edit_content" data-lngKey="content"></label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 form-group">
+                                <div class="form-label-group in-border must-input">
+                                    <input id="edit_remark" name="REMARK" type="text" class="form-control" />
+                                    <label for="edit_remark" data-lngKey="remark"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnAccept" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--IotDevice選擇視窗-->
+    <div id="modal_Iotdevice" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="iotdeviceModalTitle" class="modal-title"></h4>
+                    <button type="button" id="btnCloseModal_select" class="close log" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formQueryB">
+                        <div class="row">
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="query_IotdeviceName" name="NAME" type="text" class="form-control" />
+                                    <label for="query_IotdeviceName" data-lngKey="iotdevice_name"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-5 form-group">
+                                <div class="form-label-group in-border">
+                                    <input id="query_iotdeviceIP" name="IP" type="text" class="form-control" />
+                                    <label for="query_iotdeviceIP" data-lngKey="iotdevice_ip"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <button type="button" id="btnQueryIotdevice" class="btn btn-primary log ajaxRequest" data-lngKey="search"></button>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="dgB"></table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnIotdevice" class="btn btn-primary log ajaxRequest" data-dismiss="modal" data-lngKey="ok"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dvmsgdisplay" class="modal fade" role="dialog"></div>
+
+
+<script>
+    let action = "";
+    let repeatCmdMqtt = "";
+    let selectedIndex;
+    let selectedGUID;
+    let iotdevicetargetId;
+    let iotdeviceGUID = "";
+    let iotdeviceNAME = "";
+    let iotdeviceSNKEY = "";
+    let iotdeviceIP = "";
+    let type = "";
+    let diCount = "";
+    let doCount = "";
+
+    let testClientId = "";
+
+    let addiotdeviceGUID;
+    let queryParams, queryParamsB;
+    let lastPage;
+    let doc;
+    let bannedModify = []; //禁止修改的欄位input name
+
+    //頁面元件初始化
+    function PageInit() {
+        $('#dg').datagrid({
+            url: '../api/ApiCmdMqtt/Query',
+            method: 'POST',
+            toolbar: '#toolbar',
+            singleSelect: true,
+            pagination: true, //顯示資料換頁工具列
+            fit: true, //固定Grid高度,需指定
+            sortName: 'NAME',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'IOTDEVICE_NAME', title: doc.getTextByKey('iotdeviceName'), sortable: true },
+                { field: 'IOTDEVICE_SNKEY', title: doc.getTextByKey('iotdeviceSnkey'), sortable: true },
+                { field: 'IOTDEVICE_IP', title: doc.getTextByKey('iotdeviceIP'), sortable: true },
+                { field: 'NAME', title: doc.getTextByKey('name'), sortable: true },
+                { field: 'COMMAND', title: doc.getTextByKey('command'), sortable: true },
+                { field: 'TYPE', title: doc.getTextByKey('type'), sortable: true },
+                //{ field: 'MQSERVER', title: doc.getTextByKey('mqserver'), sortable: true },
+                { field: 'REMARK', title: doc.getTextByKey('remark') }
+            ]],
+            onSelect: function (index, field) {
+                selectedGUID = field.GUID;
+                selectedIndex = index;
+
+                $('#btnEdit').linkbutton('enable');
+                $('#btnDelete').linkbutton('enable');
+                $('#btnTest').linkbutton('enable');
+
+            }, onBeforeLoad: function (param) {
+                if (action != '') {
+                    //if (iotdeviceGUID === undefined) {
+                    //    return false; //無參數時不查詢
+                    //} else {
+                    //    param.IOTDEVICE_GUID = iotdeviceGUID;
+                    //}
+                    return true; 
+                } else {
+                    return false; //無參數時不查詢
+                    if (iotdeviceGUID === undefined) {
+                        //return false; //無參數時不查詢
+                    } else {
+                        //param.IOTDEVICE_GUID = iotdeviceGUID;
+                        //param.IOTDEVICE_NAME = iotdeviceNAME;
+                    }
+                }
+
+            }, onLoadSuccess: function (rows) {
+                selectedGUID = undefined;
+                selectedIndex = undefined;
+
+                $('#btnEdit').linkbutton('disable');
+                $('#btnDelete').linkbutton('disable');
+                $('#btnTest').linkbutton('disable');
+                //bindresize(this);
+            }
+        });
+
+        //資料換頁工具列文字顯示
+        var p = $('#dg').datagrid('getPager');
+        $(p).pagination({
+            pageSize: 10,
+            pageList: [5, 10, 15],
+            beforePageText: doc.getTextByKey('beforePageText'),
+            afterPageText: doc.getTextByKey('afterPageText'),
+            displayMsg: doc.getTextByKey('displayMsg')
+        });
+        //$('#btnAdd').linkbutton('disable');
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        $('#btnTest').linkbutton('disable');
+
+        //停用輸入欄位的自動完成
+        let tagArr = document.getElementsByTagName("input");
+        for (let i = 0; i < tagArr.length; i++) {
+            tagArr[i].autocomplete = 'off';
+        }
+
+        //套用浮動輸入欄位標籤樣式
+        let labels = document.getElementsByTagName('LABEL');
+        for (let i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                let elem = document.getElementById(labels[i].htmlFor);
+                if (elem) {
+                    elem.setAttribute("placeholder", labels[i].textContent);
+                }
+            }
+        }
+
+        //#region 彈出視窗設定
+        $('#modal_edit').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#modal_Iotdevice').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        $('#modal_test').modal({
+            show: false, //預設不顯示
+            backdrop: 'static', //彈出視窗點背景無法關閉
+            keyboard: false, //按Esc鍵不會關閉視窗
+        });
+        //#endregion
+
+        setNotNull();
+
+        //設定事件綁定
+        bindActionEvent();
+        bindAjaxEvent();
+    }
+
+    //事件綁定
+    function PageEventBind() {
+        $('#btnQuery').on('click', () => { Query(1) });
+        $('#btnAdd').on('click', Add);
+        $('#btnEdit').on('click', Edit);
+        $('#btnDelete').on('click', Delete);
+        $('#btnTest').on('click', Test);
+
+        $('#btnSubscribe').on('click', SubscribeCmdMqtt);
+        $('#btnPublish').on('click', PublishCmdMqtt);
+        $('#btnStateReturn').on('click', GetMsgSubscribed);
+        
+        $('#btnAccept').on('click', Accept);
+        $('.btn-confirm').on('click', Confirm);
+
+        $('#query_iotdevice').on('click', IotdeviceSnow);
+        $('#edit_iotdevice').on('click', IotdeviceSnow);
+        //$('#edit_type').on('change', onSelectOptionChange);
+
+        $('#btnQueryIotdevice').on('click', queryB);
+        $('#btnIotdevice').on('click', iotdevice);
+
+        $('#modal_edit').on('show.bs.modal', onEditModalShow);
+
+        $('#modal_Iotdevice').on('show.bs.modal', beforeIotdeviceModalShow);
+        $('#modal_Iotdevice').on('shown.bs.modal', onIotdeviceModalShow);
+        
+        $(window).on("resize", resizeLayout);
+    }
+
+    //重設頁面元件大小
+    function resizeLayout() {
+        //重設手風琴選單大小
+        $('#formQueryPanel').accordion('resize');
+        //重設Grid大小
+        $('#dg').datagrid('resize');
+    }
+
+    //必填欄位上色
+    function setNotNull(tableName) {
+        $('#edit_name').addClass('required');
+
+        $('#edit_type').addClass('required');
+        $('#edit_command').addClass('required');
+    }
+
+    //查詢
+    async function Query(pageIdx) {
+        action = 'query';
+        selectedGUID = undefined;
+        selectedIndex = undefined;
+
+        $('#btnEdit').linkbutton('disable');
+        $('#btnDelete').linkbutton('disable');
+
+        $('#btnTest').linkbutton('disable');
+
+        queryParams = $('#formQuery').serializeObject();
+        queryParams.IOTDEVICE_GUID = iotdeviceGUID;
+        if (queryParams.IOTDEVICE_NAME === "") {
+            queryParams.IOTDEVICE_GUID = "";
+        }
+        await new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: "../api/ApiCmdMqtt/Count",
+                data: queryParams,
+                dataType: "json",
+                success: function (response) {
+                    queryParams.total = response.count;
+                    resolve(queryParams);
+                }
+            });
+        }).then((parms) => {
+            $("#dg").datagrid('options').queryParams = parms;
+            $('#dg').datagrid('gotoPage', pageIdx);
+            return;
+        }).then(() => {
+            $('.ajaxRequest').attr('disabled', false);
+        }).finally(() => {
+            $('#query_iotdevice_name').val('');
+            $('#query_iotdevice_ip').val('');
+
+            $('#query_name').val('');
+            $('#query_type').val('');
+        });
+    }
+    //查詢B表
+    function queryB() {
+        queryParamsB = new Object();
+        queryParamsB = $('#formQueryB').serializeObject();
+        $('#dgB').datagrid('options').queryParams = queryParamsB;
+        $('#dgB').datagrid('gotoPage', 1);
+    }
+
+    //IotDevice選擇
+    function iotdevice() {
+        $('#modal_Iotdevice').modal('hide');
+
+    }
+
+    //新增,清空欄位後開窗
+    function Add() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'add';
+        //selectedGUID = "";
+        $('#edit_command').attr('disabled', false);
+        $('#edit_command').css('background', '#ffffff');
+
+        let elm = document.getElementById("formEdit");
+
+        for (let i = 0; i < elm.length; i++) {
+            elm[i].value = "";
+            elm[i].disabled = false;
+        }
+        $('#divAdd').show();
+        $('#divAdd2').show();
+        $('#divAdd3').show();
+        $('#modal_edit').modal('show');
+
+    }
+
+    //測試
+    function Test() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        let data = { GUID: selectedGUID };
+        action = 'test';
+
+        let elmPublish = document.getElementById("formPublish");        
+        for (let i = 0; i < elmPublish.length; i++) {
+            elmPublish[i].value = "";            
+        }
+
+        let elmSubscribe = document.getElementById("formSubscribe");
+        for (let i = 0; i < elmSubscribe.length; i++) {
+            elmSubscribe[i].value = "";
+        }
+
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiCmdMqtt/GetCmdTopicsByGUID",
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                let subscribeTopic = data.topic["STOPIC"];
+                let puboishTopic = data.topic["PTOPIC"];                
+                let command_json = data.rows[0]["COMMAND_JSON"];
+                $('#subscribe_topic').val(subscribeTopic);
+                $('#publish_topic').val(puboishTopic);
+                $('#publish_command_json').val(command_json);
+            },
+            complete: function (url) {
+                $('#btnPublish').text(globalDoc.getTextByKey("publish"));
+                $('#btnStateReturn').text(globalDoc.getTextByKey("getMsg"));
+                $('#modal_test').modal('show');
+            }
+        });
+        
+    }
+
+    //編輯
+    function Edit() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        let data = { GUID: selectedGUID };
+        action = 'edit';
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiCmdMqtt/GetOneByGUID",
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                let userData = data.rows[0];
+                let elm = document.getElementById("formEdit");
+
+                for (let i = 0; i < elm.length; i++) {
+                    let name = elm[i].name;
+                    $(elm[i]).val(userData[name]);
+
+                    if (bannedModify.includes(name)) {
+
+                    }
+                }
+
+
+                //
+                iotdeviceGUID = userData["IOTDEVICE_GUID"];
+
+                //let type = $('#edit_type').val();
+                type = userData["TYPE"];
+                diCount = userData["DI_COUNT"];
+                doCount = userData["DO_COUNT"];
+                let command_left = "";
+
+                switch (type) {
+                    case "DI":
+                        for (var i = 0; i < doCount; i++) {
+                            command_left += "0";
+                            if (i < doCount - 1) { command_left += ","; }
+                        }
+                        break;
+                    case "DO":
+                        for (var i = 0; i < diCount; i++) {
+                            command_left += "0";
+                            if (i < diCount - 1) { command_left += ","; }
+                        }
+                        break;
+                }
+                $('#edit_command_left').val(command_left);
+                
+            },
+            complete: function (url) {
+                //$('#divAdd').hide();//原為不顯示
+                //$('#divAdd2').hide();
+                //$('#divAdd3').hide();
+                $('#divAdd').show();
+                $('#divAdd2').show();
+                $('#divAdd3').show();
+                $('#edit_command').attr('disabled', true);
+                $('#edit_command').css('background', '#e8e8e8');
+                $('#modal_edit').modal('show');
+            }
+        });
+    }
+
+    //刪除
+    function Delete() {
+        if ($(this).linkbutton('options').disabled == true) return;
+
+        action = 'delete';
+
+        JQMessageBox(
+            globalDoc.getTextByKey('confirm'),
+            globalDoc.getTextByKey('delMsg'),
+            {
+                'Y': globalDoc.getTextByKey('y'),
+                'N': globalDoc.getTextByKey('n')
+            },
+            Confirm
+        );
+    }  
+    //IotDevice選擇開窗
+    function IotdeviceSnow(e) {        
+        let targetId = e.target.id;
+        if (targetId === '') return;
+
+        switch (targetId) {
+            case "query_iotdevice":                
+                iotdevicetargetId = targetId;
+                break;
+            case "edit_iotdevice":
+                iotdevicetargetId = targetId;
+                break;        
+        }        
+
+        $('#modal_Iotdevice').modal('show');
+    }
+    function beforeIotdeviceModalShow(e) {
+        let inputElms = document.forms["formQueryB"].getElementsByTagName("input");
+        //清空輸入欄位
+        for (let i = 0; i < inputElms.length; i++) {
+            inputElms[i].value = "";
+        }
+        //變更標題
+        $('#iotdeviceModalTitle').text(doc.getTextByKey("selectIotdevice"));
+        queryParamsB = null;
+    }
+    //事件:IotDevice選擇視窗開啟
+    function onIotdeviceModalShow(e) {
+        $('#btnIotdevice').text(globalDoc.getTextByKey('ok'));
+        tableInitB();
+        $('#dgB').datagrid('loadData', { "total": 0, "rows": [] });
+        $('#btnIotdevice').attr('disabled', true);
+    }
+    function tableInitB() {
+
+        $('#dgB').datagrid({
+            url: '../api/ApiIotdevice/QueryA',
+            method: 'POST',
+            singleSelect: true,
+            height: 350,
+            sortName: 'SN_KEY',
+            emptyMsg: '<div style="text-align:center">No data.</div>',
+            columns: [[
+                { field: 'GUID', title: '', width: '0%', hidden: true },
+                { field: 'NAME', title: doc.getTextByKey('iotdeviceName'), width: '50%', sortable: true },
+                { field: 'SN_KEY', title: doc.getTextByKey('iotdeviceSnkey'), width: '20%', sortable: true },
+                { field: 'IP', title: doc.getTextByKey('iotdeviceIP'), width: '30%', sortable: true },
+                //{ field: 'DI_COUNT', title: doc.getTextByKey('dicount'), width: '11%', sortable: true },
+                //{ field: 'DO_COUNT', title: doc.getTextByKey('docount'), width: '11%', sortable: true }
+            ]],
+            onSelect: function (index, field) {
+                $('#btnIotdevice').attr('disabled', false);
+                iotdeviceGUID = field.GUID;
+                iotdeviceNAME = field.NAME;
+                iotdeviceSNKEY = field.SN_KEY;
+                iotdeviceIP = field.IP;
+                diCount = field.DI_COUNT;
+                doCount = field.DO_COUNT;
+
+                if (iotdevicetargetId === "edit_iotdevice") {
+                    $('#edit_iotdevice_name').val(field.NAME);
+                    $('#edit_iotdevice_snkey').val(field.SN_KEY);
+                    $('#edit_iotdevice_ip').val(field.IP);
+                }
+                if (iotdevicetargetId === "query_iotdevice") {
+                    $('#query_iotdevice_name').val(field.NAME);
+                    $('#query_iotdevice_ip').val(field.IP);
+                }
+            }, onBeforeLoad: function (param) {
+                if (queryParamsB === null) {
+                    return false; //無參數時不查詢
+                } else {
+
+                }
+            }, onLoadSuccess: function (rows) {
+                $('#btnQueryIotdevice').attr('disabled', false);
+                $('#btnIotdevice').attr('disabled', true);
+                guidB = null;
+            }
+        });
+
+    }
+    //事件:顯示資料編輯視窗,動態更新標題用
+    function onEditModalShow(e) {
+        let formTitle = $('#span_action')[0];
+
+        switch (action) {
+            case "add":
+                formTitle.innerText = globalDoc.getTextByKey("add");
+                break;
+            case "edit":
+                formTitle.innerText = globalDoc.getTextByKey("edit");
+                break;
+        }
+
+        $('#btnAccept').text(globalDoc.getTextByKey("ok"));
+    }
+
+    function SubscribeCmdMqtt() {
+        let clientId = $('#subscribe_clientid').val();
+        let topic = $('#subscribe_topic').val();
+        let data = { CLIENTID: clientId, TOPIC: topic };
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiCmdMqtt/SubscribeCmdMqtt",
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                if (response.result === false) {
+                    toastr.error(
+                        globalDoc.getTextByKey('error'),
+                        globalDoc.getTextByKey(`${response.msg}`)
+                    );
+                } else {
+                    testClientId = `${response.clientId}`;
+
+                    toastr.success(
+                        globalDoc.getTextByKey('succeed'),
+                        globalDoc.getTextByKey(`${response.msg}`)
+                    );
+
+                    $('#subscribe_clientid').val(testClientId);
+                }
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    function PublishCmdMqtt() {
+        let topic = $('#publish_topic').val();
+        let data = { GUID: selectedGUID, TOPIC: topic };
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiCmdMqtt/PublishCmdMqtt",
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                if (response.result === false) {
+                    toastr.error(
+                        globalDoc.getTextByKey('error'),
+                        globalDoc.getTextByKey(`${response.msg}`)
+                    );
+                } else {
+                    toastr.success(
+                        globalDoc.getTextByKey('succeed'),
+                        globalDoc.getTextByKey(`${response.msg}`)
+                    );
+                }
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    function GetMsgSubscribed() {
+        let id = $('#subscribe_clientid').val();
+        let data = { ClientId: id };
+
+        $.ajax({
+            type: "POST",
+            url: "../api/ApiCmdMqtt/GetMsgSubscribed",
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                if (response.result === false) {
+                    alert(`${response.msg}`);
+                }
+                else {
+                    let msg = `${response.msg}`;
+                    $('#state_return').val(msg + $('#state_return').val());
+                }
+                $('.ajaxRequest').attr('disabled', false);
+            }
+
+        });
+    }
+
+    //資料異動確認
+    async function Accept() {
+        let data, actionUrl, guid;
+
+        let edit_iotdevice_name = $('#edit_iotdevice_name').val();
+        let edit_iotdevice_snkey = $('#edit_iotdevice_snkey').val();
+        let edit_iotdevice_ip = $('#edit_iotdevice_ip').val();
+        let edit_name = $('#edit_name').val();
+        let edit_type = $('#edit_type').val();
+        let edit_content = $('#edit_content').val();
+        let edit_command = $('#edit_command').val();
+        let edit_index = $('#edit_index').val();
+        let edit_mqserver = $('#edit_mqserver').val();
+        let edit_remark = $('#edit_remark').val();
+
+
+        data = $('#formEdit').serializeObject();
+
+        switch (edit_type) {
+            case "DI":
+                data.DI_COMMAND = edit_content;
+                //data.DO_COMMAND = edit_command_left;
+                break;
+            case "DO":
+                //data.DI_COMMAND = edit_command_left;
+                data.DO_COMMAND = edit_content;
+                break;
+        }
+            
+
+        if (action == "add") {
+            data.INSERT_USER = sessionStorage.getItem("userGuid");
+            data.IOTDEVICE_GUID = iotdeviceGUID;
+        } else {
+            data.GUID = selectedGUID
+            data.IOTDEVICE_GUID = iotdeviceGUID;
+            data.UPDATE_USER = sessionStorage.getItem("userGuid");
+            data.COMMAND = edit_command;
+        }
+
+        switch (action) {
+            case "add":
+                actionUrl = "../api/ApiCmdMqtt/Insert";
+                break;
+            case "edit":
+                actionUrl = "../api/ApiCmdMqtt/Update";
+                break;
+            case "delete":
+                actionUrl = "../api/ApiCmdMqtt/Delete";
+                break;
+        }
+        //取得目前頁面
+        let currentPage = $('#dg').datagrid('options').pageNumber;
+        let getSqlSucceed = await getSql($('#funcName').val(), action, data);
+
+        //未輸入的資料顯示錯誤
+        //if (action === 'add') {
+            //if (iotdeviceGUID === '' || edit_iotdevice_ip === '' || edit_name === '' || edit_type === '' || edit_command === '') {
+            //    toastr.error(
+            //        globalDoc.getTextByKey('error'),
+            //        globalDoc.getTextByKey('輸入資料不完整')
+            //    );
+            //    $('.ajaxRequest').attr('disabled', false);
+            //    return;
+            //}
+        //}
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            dataType: "json",
+            success: function (response) {
+                if (response.result == false) {
+                    toastr.error(
+                        globalDoc.getTextByKey('error'),
+                        globalDoc.getTextByKey(`${response.msg}`)
+                    );
+                } else {
+                    toastr.success(
+                        globalDoc.getTextByKey('succeed'),
+                        globalDoc.getTextByKey('prompt')
+                    );
+
+                    if (getSqlSucceed) {
+                        saveRequestPerformanceLog(
+                            sessionStorage.getItem('userGuid'),
+                            sessionStorage.getItem('groupId')
+                        );
+                    }
+                    $('#modal_edit').modal('hide');
+                    Query(currentPage);
+                }
+                $('.ajaxRequest').attr('disabled', false);
+            }
+        });
+    }
+
+    //確認視窗按鈕動作
+    function Confirm(btnVal) {
+        switch (btnVal) {
+            case 'Y':
+                switch (action) {
+                    case 'delete':
+                        Accept();
+                        break;                
+                }
+                break;
+            //case 'N':
+            //    repeat = '';
+            //    break;
+            //case 'export':
+            //    Export();
+            //    break;
+        }
+    }
+
+    //[DataGrid]轉換時間格式
+    function convertTime(value, row, index) {
+        return value.replace('T', ' ');
+    }
+
+    //#region 下拉選單方法群
+
+    //刷新下拉選單項目(參數:目標select元件ID,資料來源URL,傳送參數) [是否移至共用區?]
+    function refreshDorpDownListItems(targetSelectElementId, dataSourceUrl, parameters) {
+        let elm = $('#' + targetSelectElementId);
+        let optionElm = document.createElement("option");
+        optionElm.setAttribute("value", "");
+
+        //setElmLanguage(optionElm, "plzChoice");
+
+        //移除並加入預設選項
+        elm.find('option').remove().end();
+        elm.append(optionElm);
+
+        //沒輸入資料來源Url直接結束
+        if (typeof (dataSourceUrl) == undefined) {
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: dataSourceUrl,
+            data: parameters,
+            dataType: "json",
+            success: function (data) {
+                data.rows.forEach(function (item) {
+                    elm.append(`<option value="${item.Key}">${item.Value}</option>`);
+                });
+
+                elm.prop('selectedIndex', 0);
+            }
+        });
+    }
+
+    //下拉選單更改選取
+    function onSelectOptionChange(e) {
+        let targetId = e.target.id;
+        let selectedValue = e.target.value;
+        
+        if (iotdeviceGUID === "") {
+            toastr.error(
+                globalDoc.getTextByKey('error'),
+                globalDoc.getTextByKey('請先選擇IOT Device')
+            );
+        }
+        
+
+        let diCommand = "";
+        let doCommand = "";
+
+        for (var i = 0; i < diCount; i++) {
+            diCommand += "0";
+            if (i < diCount - 1) { diCommand += ","; }
+        }
+        for (var i = 0; i < doCount; i++) {
+            doCommand += "0";
+            if (i < doCount - 1) { doCommand += ","; }
+        }
+
+        switch (selectedValue) {
+            case "DI":
+                $('#edit_command').val(diCommand);
+                $('#edit_command_left').val(doCommand);
+                break;
+            case "DO":
+                $('#edit_command').val(doCommand);
+                $('#edit_command_left').val(diCommand);
+                break;
+        }
+    }
+    //#endregion
+
+    //#region 驗證方法群
+    //日期驗證(日期A,日期B,條件:=>,<=)
+    function dateTimeValidation(dateTimeA, dateTimeB, condition) {
+        let offset = Date.parse(dateTimeA).valueOf() - Date.parse(dateTimeB).valueOf();
+
+        if (Number.isNaN(offset)) {
+            return true;
+        }
+
+        switch (condition) {
+            case '<=':
+                return offset <= 0 ? true : false;
+                break;
+            case '>=':
+                return offset >= 0 ? true : false;
+                break;
+            case '<':
+                return offset < 0 ? true : false;
+                break;
+            case '>':
+                return offset > 0 ? true : false;
+                break;
+        }
+    }
+    //#endregion
+
+    $(function () {
+        doc = new Doc($('#funcName').val(), sessionStorage.getItem('userLng'), 'content');
+        doc.searchFile().then((val) => {
+            doc.converStaticElm("content");
+            PageInit();
+            PageEventBind();
+        });
+    });
+</script>

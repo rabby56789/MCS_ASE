@@ -1,0 +1,122 @@
+﻿/*error*/
+.error-main {
+    position: relative;
+    overflow-y: hidden;
+    width:100%;
+    height:100%;
+}
+
+    .error-main::after {
+        content: '404';
+        font-size: 40vw;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -55%);
+        text-shadow: 0 0 0.5rem #d4d4d4;
+        color: #E9E9E9;
+        display: inline-block;
+        font-weight: bolder;
+    }
+
+.error-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.error-title {
+    font-size: 5vw;
+    white-space: nowrap;
+    margin-bottom: 30px;
+    color: #2D385B;
+}
+
+.error-msg {
+    background: linear-gradient(335deg, #8F52A6 0%, #496F9A 27%, #496F9A 100%);
+    text-align: center;
+    border-radius: 35px;
+    max-height: 50px;
+    line-height: 50px;
+    position: relative;
+    overflow-y: hidden;
+    transition: max-height 400ms ease;
+}
+
+    .error-msg.show {
+        max-height: 500px;
+        transition: max-height 400ms ease;
+    }
+
+
+    .error-msg .error-btn {
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+
+
+    .error-msg .fa-angle-down {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+    }
+
+    .error-msg .fa-angle-down {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        transform: rotate(-90deg);
+        transition: all 400ms ease;
+    }
+
+        .error-msg .fa-angle-down.rotate {
+            transform: rotate(0);
+            transition: all 400ms ease;
+        }
+
+.error-detail {
+    overflow-y: auto;
+    max-height: 415px;
+    margin-bottom:35px;
+}
+
+    .error-detail::-webkit-scrollbar-track {
+        --webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: transparent;
+        border-radius: 5px
+    }
+
+    .error-detail::-webkit-scrollbar {
+        width: 10px;
+        background-color: transparent;
+        border-radius: 5px;
+        height: 10px;
+    }
+
+    .error-detail::-webkit-scrollbar-thumb {
+        background-color: #979797;
+        border: 2px solid #979797;
+        border-radius: 5px
+    }
+
+
+/**/
+
+@media screen and (max-width:768px) {
+
+    .error-content > .error-title {
+        font-size: 2.5rem;
+    }
+
+    .error-main::after {
+        top: 0%;
+        transform: translateX(-50%);
+    }
+
+    .error-msg .error-btn {
+        font-size: 1rem
+    }
+}

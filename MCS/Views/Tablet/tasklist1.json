@@ -1,0 +1,16 @@
+{
+	"order": "asc",
+	"page": "1",
+	"sort": "AGV_ID",
+	"total": "1",
+	"rows": [
+		{
+			"AGV_ID": "96",
+			"STATUS": "3",
+			"BATTERY": "65",
+			"POSITION": "postX:20119/postY:22470",
+			"TASK_ID": "",
+			"EXPLAIN": ""
+		}
+	]
+}
